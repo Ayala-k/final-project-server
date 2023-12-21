@@ -1,8 +1,7 @@
 // Contains validation from the usermodule
 const Joi = require("joi");
 
-exports.validUser = (_reqBody) => {
-
+exports.userValidation = (_reqBody) => {
   let joiSchema = Joi.object({
     full_name: {
       first_name: Joi.string().min(2).max(50).required(),
@@ -17,10 +16,11 @@ exports.validUser = (_reqBody) => {
   return joiSchema.validate(_reqBody);
 }
 
-exports.validLogin = (_reqBody) => {
+
+exports.loginValidation = (_reqBody) => {
 
   let joiSchema = Joi.object({
-    userName: Joi.string().min(2).max(15).required(),
+    user_name: Joi.string().min(2).max(15).required(),
     password: Joi.string().min(3).max(99).required()
   })
 
