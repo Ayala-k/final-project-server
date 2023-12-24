@@ -16,6 +16,9 @@ exports.userCtrl = {
       if (!user) {
         return res.status(401).json({ msg: "Password or user name is worng ,code:1" })
       }
+      if(user.isBlocked){
+        return res.status(401).json({ msg: "you are blocked:]" })
+      }
 
       let authPassword = await bcrypt.compare(req.body.password, user.password);
       if (!authPassword) {
@@ -35,7 +38,6 @@ exports.userCtrl = {
       res.status(500).json({ msg: "err", err })
     }
   },
-
 
   signUp: async (req, res) => {
 
@@ -62,7 +64,6 @@ exports.userCtrl = {
     }
   },
 
-
   logOut: async (req, res) => {
 
     if (req.cookies.access_token != null) {
@@ -71,5 +72,39 @@ exports.userCtrl = {
     }
 
     res.status(400).json("log out failed no cookies")
+  },
+
+  update: async (req, res) => {
+    let validBody = userValidation(req.body);
+    if (validBody.error) {
+      return res.status(400).json(validBody.error.details);
+    }
+
+    try {
+      let user = new UserModel.updateOne({user_name:req.tokenData.user_name},req.body);
+      user.password = await bcrypt.hash(user.password, 10);
+      await user.save();
+      user.password = "********";
+      res.status(201).json(user);
+    }
+    catch (err) {
+        res.status(500).json({ msg: "err", err })
+    }
+  },
+
+  blockUser: async (req, res) => {
+    const { user_name } = req.params;
+    try{
+      let user=await UserModel.findOne({user_name:user_name});
+      if(!user){
+        return res.status(404).json({msg:"user not found"})
+      }
+      user.blocked = true;
+      user = await UserModel.updateOne({user_name:user_name},user);
+      res.status(201).json(user);
+    }
+      catch(err){
+        res.status(500).json({msg:"err",err})
+      }
+    }
   }
-}

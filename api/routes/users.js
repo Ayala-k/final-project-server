@@ -11,5 +11,9 @@ router.post("/login", userCtrl.login)
 
 router.get('./logout', authUser, userCtrl.logOut)
 
+router.put('update/:user_name', authUser, userCtrl.update)
 
-module.exports = router;//aaa
+router.put('/block/:user_name', authAdmin, userCtrl.blockUser)
+
+
+module.exports = router;
