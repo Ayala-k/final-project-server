@@ -16,7 +16,7 @@ exports.userCtrl = {
       if (!user) {
         return res.status(401).json({ msg: "Password or user name is worng ,code:1" })
       }
-      if(user.isBlocked){
+      if (user.isBlocked) {
         return res.status(401).json({ msg: "you are blocked:]" })
       }
 
@@ -49,8 +49,16 @@ exports.userCtrl = {
     try {
       let user = new UserModel(req.body);
       user.password = await bcrypt.hash(user.password, 10);
+      console.log(user);
       await user.save();
       user.password = "********";
+
+      let token = createToken(user.user_name, user.role);
+      res.cookie('access_token', token, {
+        maxAge: 60 * 60 * 1000,
+        httpOnly: true
+      })
+
       res.status(201).json(user);
     }
 
@@ -68,7 +76,7 @@ exports.userCtrl = {
 
     if (req.cookies.access_token != null) {
       res.clearCookie('access_token');
-      res.json('Cookie cleared');
+      return res.json('Cookie cleared');
     }
 
     res.status(400).json("log out failed no cookies")
@@ -81,30 +89,29 @@ exports.userCtrl = {
     }
 
     try {
-      let user = new UserModel.updateOne({user_name:req.tokenData.user_name},req.body);
-      user.password = await bcrypt.hash(user.password, 10);
-      await user.save();
+      let user = await UserModel.updateOne({ user_name: req.tokenData.user_name }, req.body);
       user.password = "********";
       res.status(201).json(user);
     }
     catch (err) {
-        res.status(500).json({ msg: "err", err })
+      res.status(500).json({ msg: "err", err })
     }
   },
 
   blockUser: async (req, res) => {
     const { user_name } = req.params;
-    try{
-      let user=await UserModel.findOne({user_name:user_name});
-      if(!user){
-        return res.status(404).json({msg:"user not found"})
+    try {
+      let user = await UserModel.findOne({ user_name: user_name });
+      if (!user) {
+        return res.status(404).json({ msg: "user not found" })
       }
-      user.blocked = true;
-      user = await UserModel.updateOne({user_name:user_name},user);
+      user.isBlocked = true;
+      user = await UserModel.updateOne({ user_name: user_name }, user);
+      console.log("block",user);
       res.status(201).json(user);
     }
-      catch(err){
-        res.status(500).json({msg:"err",err})
-      }
+    catch (err) {
+      res.status(500).json({ msg: "err", err })
     }
   }
+}

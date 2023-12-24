@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 const commentSchema = new mongoose.Schema({
-    writer_name:{ type:mongoose.Schema.Types.user_name, ref: "users" },
-    professional_name:{ type:mongoose.Schema.Types.user_name, ref: "professionals" },
+    writer_name:{ type:mongoose.Schema.Types.ObjectId, ref: "users" },
+    professional_name:{ type:mongoose.Schema.Types.ObjectId, ref: "professionals" },
     specialization:String,
     text:String,
     rating:Number,

@@ -1,18 +1,17 @@
 const express = require("express");
-const { auth, authAdmin } = require("../middlewares/auth");
+const { authUser, authAdmin } = require("../middlewares/auth");
 const { commentCtrl } = require("../controlers/commentControl");
 
 const router = express.Router();
 
+router.post("/createComment", authUser, commentCtrl.createComment)
 
-router.post("/createComment", auth, commentCtrl.createComment)
+router.get("/getProfessionalComments/:user_name", authUser, commentCtrl.getProfessionalComments)
 
-router.get("/getProfessionalComments/:user_name", auth, commentCtrl.getProfessionalComments)
-
-router.get("/getProfessionalRating/:user_name", auth, commentCtrl.getProfessionalRating)
+router.get("/getProfessionalRating/:user_name", authUser, commentCtrl.getProfessionalRating)
 
 router.get("/getProfessionalSpecializationRating/:user_name/:specialization",
-    auth, commentCtrl.getProfessionalSpecializationRating)
+authUser, commentCtrl.getProfessionalSpecializationRating)
 
 
 module.exports = router;

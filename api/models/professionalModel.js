@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const professionalSchema = new mongoose.Schema({
-    user_name:{ type:mongoose.Schema.Types.user_name, ref: "users" },
+    user_name:{ type:mongoose.Schema.Types.ObjectId, ref: "users" },
     profession:String,
     specializations:{
         type: [String],
