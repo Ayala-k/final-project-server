@@ -12,4 +12,4 @@ router.post("/login", userCtrl.login)
 router.get('./logout', authUser, userCtrl.logOut)
 
 
-module.exports = router;
+module.exports = router;//aaa
