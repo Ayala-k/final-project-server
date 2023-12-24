@@ -5,7 +5,10 @@ const commentSchema = new mongoose.Schema({
     professional_name:{ type:mongoose.Schema.Types.user_name, ref: "professionals" },
     specialization:String,
     text:String,
-    rating:Number
+    rating:Number,
+    date_created: {
+      type: Date, default: Date.now()
+    }
   })
 
   exports.CommentModel = mongoose.model("comments", commentSchema)
