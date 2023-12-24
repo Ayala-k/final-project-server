@@ -1,23 +1,15 @@
-const express= require("express");
-const {auth, authAdmin} = require("../middlewares/auth");
-const { authCtrl } = require("../controllers/authControll");
-const { userCtrl } = require("../controllers/userControll");
+const express = require("express");
+const { auth, authAdmin } = require("../middlewares/auth");
+const { userCtrl } = require("../controlers/userControl");
+
 const router = express.Router();
 
-// router.get("/myInfo",auth,userCtrl.myInfo)
 
-// router.get("/usersList", authAdmin ,userCtrl.userList)
+router.post("/signup", userCtrl.signUp)
 
-// router.post("/",authCtrl.signUp)
+router.post("/login", userCtrl.login)
 
-// router.post("/login", authCtrl.login)
-
-// router.put("/:idEdit",auth,userCtrl.editUser);
-
-// router.delete("/:idDel" ,auth, userCtrl.deleteAccount);
-
-
-
+router.get('./logout', auth, userCtrl.logOut)
 
 
 module.exports = router;

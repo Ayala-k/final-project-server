@@ -6,7 +6,8 @@ const professionalSchema = new mongoose.Schema({
     specializations:{
         type: [String],
         default: [],
-      }
+      },
+    information:String
   })
 
   exports.ProfessionalModel = mongoose.model("professionals", professionalSchema);

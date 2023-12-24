@@ -6,7 +6,9 @@ const jobSchema = new mongoose.Schema({
         lat:Number,
         lng:Number
     },
-    time:Date
+    time:Date,
+    description:String,
+    rehearsal_details:String
   })
 
   exports.JobModel = mongoose.model("jobs", jobSchema)

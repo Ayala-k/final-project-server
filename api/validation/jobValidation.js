@@ -7,7 +7,9 @@ exports.validateJob = (_reqBody) =>{
             lat:Joi.number().required(),
             lng:Joi.number().required()
         },
-        time:Joi.date().required()       
+        time:Joi.date().required(),
+        description:Joi.string().min(20).max(100).required(),    
+        rehearsal_details:Joi.string().min(20).max(100)      
     })
     return schemaJoi.validate(_reqBody);
 }
