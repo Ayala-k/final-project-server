@@ -9,7 +9,8 @@ exports.validateJob = (_reqBody) =>{
         },
         time:Joi.date().required(),
         description:Joi.string().min(20).max(100).required(),    
-        rehearsal_details:Joi.string().min(20).max(100)      
+        rehearsal_details:Joi.string().min(20).max(100),
+        payment:Joi.number().min(0).required()
     })
     return schemaJoi.validate(_reqBody);
 }

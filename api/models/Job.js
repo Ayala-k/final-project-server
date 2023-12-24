@@ -8,7 +8,8 @@ const jobSchema = new mongoose.Schema({
     },
     time:Date,
     description:String,
-    rehearsal_details:String
+    rehearsal_details:String,
+    payment: Number
   })
 
   exports.JobModel = mongoose.model("jobs", jobSchema)

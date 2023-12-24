@@ -1,16 +1,15 @@
 const mongoose = require('mongoose');
 
 const jobOfferSchema = new mongoose.Schema({
-    job_id:{ type:mongoose.Schema.Types.ObjectId, ref: "jobs" },
-    profession:String,
-    specialization:String,
-    amount_of_needed:Number,
-    minimal_rate:Number,
-    payment:Number,
-    contracted_professionals:{
-        type: [String],
+    job_id: { type: mongoose.Schema.Types.ObjectId, ref: "jobs" },
+    amount_of_needed: Number,
+    optional_professionals: {
+        type: [{ type: mongoose.Schema.Types.user_name, ref: "professionals" }]
+    },
+    contracted_professionals: {
+        type: [{ type: mongoose.Schema.Types.user_name, ref: "professionals" }],
         default: [],
-      }
-  })
+    }
+})
 
-  exports.JobModel = mongoose.model("job_offers", jobOfferSchema)
+exports.JobModel = mongoose.model("job_offers", jobOfferSchema)
