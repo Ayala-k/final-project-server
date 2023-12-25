@@ -6,11 +6,11 @@ const router = express.Router();
 
 router.post("/createComment", authUser, commentCtrl.createComment)
 
-router.get("/getProfessionalComments/:user_name", authUser, commentCtrl.getProfessionalComments)
+router.get("/getProfessionalComments/:user_id", authUser, commentCtrl.getProfessionalComments)
 
-router.get("/getProfessionalRating/:user_name", authUser, commentCtrl.getProfessionalRating)
+router.get("/getProfessionalRating/:user_id", authUser, commentCtrl.getProfessionalRating)
 
-router.get("/getProfessionalSpecializationRating/:user_name/:specialization",
+router.get("/getProfessionalSpecializationRating/:user_id/:specialization",
 authUser, commentCtrl.getProfessionalSpecializationRating)
 
 

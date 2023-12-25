@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const jobSchema = new mongoose.Schema({
-    client_name:{ type:mongoose.Schema.Types.ObjectId, ref: "users" },
+    client_id:{ type:mongoose.Schema.Types.ObjectId, ref: "users" },
     location:{
         lat:Number,
         lng:Number

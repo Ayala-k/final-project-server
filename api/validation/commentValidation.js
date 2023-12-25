@@ -10,5 +10,3 @@ exports.validateComment = (_reqBody) =>{
     })
     return schemaJoi.validate(_reqBody);
 }
-
-

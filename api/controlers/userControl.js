@@ -25,7 +25,7 @@ exports.userCtrl = {
         return res.status(401).json({ msg: "Password or user name is worng ,code:2" });
       }
 
-      let token = createToken(user.user_name, user.role);
+      let token = createToken(user._id, user.role);
       res.cookie('access_token', token, {
         maxAge: 60 * 60 * 1000,
         httpOnly: true
@@ -49,16 +49,14 @@ exports.userCtrl = {
     try {
       let user = new UserModel(req.body);
       user.password = await bcrypt.hash(user.password, 10);
-      console.log(user);
       await user.save();
       user.password = "********";
 
-      let token = createToken(user.user_name, user.role);
+      let token = createToken(user._id, user.role);
       res.cookie('access_token', token, {
         maxAge: 60 * 60 * 1000,
         httpOnly: true
       })
-
       res.status(201).json(user);
     }
 
@@ -89,27 +87,49 @@ exports.userCtrl = {
     }
 
     try {
-      let user = await UserModel.updateOne({ user_name: req.tokenData.user_name }, req.body);
-      user.password = "********";
-      res.status(201).json(user);
+      let user = await UserModel.findOne({ _id: req.tokenData.user_id })
+      let samePasswords = await bcrypt.compare(req.body.password, user.password);
+      if (!samePasswords && req.body.password != user.password) {
+        return res.status(400).json("can not change password")
+      }
+      req.body.password=user.password
+      await UserModel.updateOne({ _id: req.tokenData.user_id }, req.body);
+      res.status(201).json("changed succesfully");
     }
+
     catch (err) {
       res.status(500).json({ msg: "err", err })
     }
   },
 
   blockUser: async (req, res) => {
-    const { user_name } = req.params;
+    const { user_id } = req.body;
+
     try {
-      let user = await UserModel.findOne({ user_name: user_name });
-      if (!user) {
-        return res.status(404).json({ msg: "user not found" })
-      }
-      user.isBlocked = true;
-      user = await UserModel.updateOne({ user_name: user_name }, user);
-      console.log("block",user);
-      res.status(201).json(user);
+      const updatedUser = await UserModel.findOneAndUpdate(
+        { _id: user_id },
+        { $set: { isBlocked:true } },
+        { new: true }
+      );
+      res.json(updatedUser)
     }
+
+    catch (err) {
+      res.status(500).json({ msg: "err", err })
+    }
+  },
+
+  changePassword: async (req, res) => {
+    let user_id = req.tokenData.user_id
+    try {
+      const updatedUser = await UserModel.findOneAndUpdate(
+        { _id: user_id },
+        { $set: { password: await bcrypt.hash(req.body.password, 10) } },
+        { new: true }
+      );
+      res.json(updatedUser)
+    }
+
     catch (err) {
       res.status(500).json({ msg: "err", err })
     }

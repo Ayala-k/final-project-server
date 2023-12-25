@@ -13,7 +13,9 @@ router.get('/logout', authUser, userCtrl.logOut)
 
 router.put('/update', authUser, userCtrl.update)
 
-router.put('/block/:user_name', authAdmin, userCtrl.blockUser)
+router.patch('/block', authAdmin, userCtrl.blockUser)
+
+router.patch('/change_password', authUser, userCtrl.changePassword)
 
 
 module.exports = router;

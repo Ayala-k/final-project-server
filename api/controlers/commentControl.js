@@ -22,10 +22,10 @@ exports.commentCtrl = {
     },
 
     getProfessionalComments: async (req, res) => {
-        let professional = req.params.user_name
+        let professional = req.params.professional_id
 
         try {
-            let comments = await CommentModel.find({ professional_name: professional })
+            let comments = await CommentModel.find({ professional_id: professional })
             res.json(comments)
         }
 
@@ -36,12 +36,12 @@ exports.commentCtrl = {
     },
 
     getProfessionalRating: async (req, res) => {
-        let professional = req.params.user_name
+        let professional = req.params.professional_id
         let count = 0
         let sum = 0
 
         try {
-            let comments = await CommentModel.find({ professional_name: professional })
+            let comments = await CommentModel.find({ professional_id: professional })
             comments.foreach(c => {
                 count++
                 sum += c.rating
@@ -56,18 +56,16 @@ exports.commentCtrl = {
     },
 
     getProfessionalSpecializationRating: async (req, res) => {
-        let professional = req.params.user_name
+        let professional = req.params.professional_id
         let specialization = req.params.specialization
         let count = 0
         let sum = 0
 
         try {
-            let comments = await CommentModel.find({ professional_name: professional })
+            let comments = await CommentModel.find({ professional_id: professional,specialization:specialization })
             comments.foreach(c => {
-                if (c.specialization == specialization) {
                     count++
                     sum += c.rating
-                }
             })
             res.json({ rating: sum / count })
         }

@@ -1,11 +1,14 @@
 const express = require("express");
-const { auth, authAdmin } = require("../middlewares/auth");
+const { auth, authAdmin, authUser } = require("../middlewares/auth");
 const { jobCtrl } = require("../controlers/jobControl");
 
 const router = express.Router();
 
 
-//router.post("/signup", auth, jobCtrl.signUp)
+router.post('/add',authUser,jobCtrl.add)
 
+router.put('/update:job_id',authUser,jobCtrl.update)
+
+router.delete('/delete:job_id',authUser,jobCtrl.delete)
 
 module.exports = router;
