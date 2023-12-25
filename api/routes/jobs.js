@@ -1,14 +1,16 @@
 const express = require("express");
-const { auth, authAdmin, authUser } = require("../middlewares/auth");
+const {  authAdmin, authUser } = require("../middlewares/auth");
 const { jobCtrl } = require("../controlers/jobControl");
 
 const router = express.Router();
 
 
-router.post('/add',authUser,jobCtrl.add)
+router.post('/create_job',authUser,jobCtrl.createJob)
 
-router.put('/update:job_id',authUser,jobCtrl.update)
+router.put('/update_job_details',authUser,jobCtrl.updateJobDetails)
 
-router.delete('/delete:job_id',authUser,jobCtrl.delete)
+router.patch('/delete_job',authUser,jobCtrl.deleteJob)
+
+//router.get('/get_client_jobs',authUser,jobCtrl.getClientJobs)
 
 module.exports = router;

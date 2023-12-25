@@ -9,7 +9,11 @@ const jobSchema = new mongoose.Schema({
     time:Date,
     description:String,
     rehearsal_details:String,
-    payment: Number
+    payment: Number,
+    isCanceled: {
+        type: Boolean,
+        default: false,
+      }
   })
 
   exports.JobModel = mongoose.model("jobs", jobSchema)

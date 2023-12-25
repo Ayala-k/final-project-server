@@ -134,4 +134,5 @@ exports.userCtrl = {
       res.status(500).json({ msg: "err", err })
     }
   }
+  
 }
