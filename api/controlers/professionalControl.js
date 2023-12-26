@@ -1,4 +1,6 @@
 const { ProfessionalModel } = require("../models/professionalModel");
+const { UserModel } = require("../models/userModel");
+const { validateProfessional } = require("../validation/professionalValidation");
 const { commentCtrl } = require("./commentControl");
 
 
@@ -7,7 +9,7 @@ exports.professionalCtrl = {
     createProfessional: async (req, res) => {
         req.body.user_id = req.tokenData.user_id
 
-        let validBody = validateJob(req.body);
+        let validBody = validateProfessional(req.body);
         if (validBody.error) {
             return res.status(400).json(validBody.error.details);
         }
@@ -16,24 +18,23 @@ exports.professionalCtrl = {
             let professional = await new ProfessionalModel(req.body)
             professional.save()
 
-            const updatedUser = await UserModel.findOneAndUpdate(
+            await UserModel.findOneAndUpdate(
                 { _id: req.tokenData.user_id },
-                { $set: { role: "professional" } },
-                { new: true }
+                { role: "professional" },
             );
 
             res.json(professional)
         }
         catch (err) {
-            res.status(500).json("error")
+            res.status(500).json({ "error": err })
         }
 
     },
 
     updateProfessional: async (req, res) => {
-        req.body.user_id = req.tokenData.user_id
 
-        let validBody = userValidation(req.body);
+        req.body.user_id = req.tokenData.user_id
+        let validBody = validateProfessional(req.body);
         if (validBody.error) {
             return res.status(400).json(validBody.error.details);
         }
@@ -50,45 +51,72 @@ exports.professionalCtrl = {
 
     searchProfessional: async (req, res) => {//add price!!!
         try {
-            const { name, profession, specialization, minimalRating, minimalPricePerHour, maximalPriceRating } = req.query;
+            const { name, profession, specialization, minimalRating, minimalPricePerHour, maximalPricePerHour } = req.query;
 
             const query = {};
 
-            if (name) {
-                query['user_id.full_name'] = {
-                    $regex: new RegExp(name, 'i'),
-                };
-            }
-
             if (profession) {
                 query.profession = { $in: profession.split(',') }
-
-                if (minimalPricePerHour && maximalPriceRating) {
-                    query.price_per_hour = { $gte: minimalPricePerHour, $ste: maximalPriceRating }
-                }
-                else if (minimalPricePerHour) {
-                    query.price_per_hour = { $gte: minimalPricePerHour }
-                }
-                else if (maximalPriceRating) {
-                    query.price_per_hour = { $ste: maximalPriceRating }
-                }
-            }
-
-            if (specialization) {
-                query.specializations = { $in: specialization.split(',') };
             }
 
             let professionals = await ProfessionalModel.find(query).populate('user_id');
 
-            if (minimalRating) {
-                const filteredProfessionals = await Promise.all(
-                    professionals.map(async (p) => {
-                        const rating = await commentCtrl.getRating(p._id, specialization);
-                        return rating >= minimalRating ? p : null;
-                    })
-                );
+            // if (minimalRating) {
+            //     const filteredProfessionals = await Promise.all(
+            //         professionals.map(async (p) => {
+            //             const rating = await commentCtrl.getRating(p._id, specialization);
+            //             return rating >= minimalRating ? p : null;
+            //         })
+            //     );
 
-                professionals = filteredProfessionals.filter((p) => p !== null);
+            //     professionals = filteredProfessionals.filter((p) => p !== null);
+            // }
+
+            if (specialization) {
+                let splittedArray = specialization.split(',')
+                professionals = professionals.filter(p => {
+                    let flag = false
+                    p.specializations.forEach(s => {
+                        if (splittedArray.includes(s.specialization_name) &&
+                            (!maximalPricePerHour || s.price_per_hour <= maximalPricePerHour)) {
+                            flag = true
+                        }
+                    })
+                    return flag
+                })
+
+                // if(maximalPriceRating){
+                //     professionals = professionals.filter(p => {
+                //         let flag = false
+                //          p.specializations.forEach(s => {
+                //             if (splittedArray.includes(s.specialization_name)) {
+                //                 flag = true
+                //             }
+                //          })
+                //          return flag
+                //     })
+                // }
+            }
+
+            if (name) {
+                professionals = professionals.filter(p => {
+                    console.log(p.user_id.full_name.first_name, name);
+                    if (p.user_id.full_name.first_name.includes(name)) {
+                        console.log("added");
+                        return true
+                    }
+                    else if (p.user_id.full_name.last_name.includes(name)) {
+                        console.log("added");
+                        return true
+                    }
+                    else if (p.user_id.user_name.includes(name)) {
+                        console.log("added");
+                        return true
+                    }
+                    else {
+                        return false
+                    }
+                })
             }
 
             res.status(200).json({ professionals });

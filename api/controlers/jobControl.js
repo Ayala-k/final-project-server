@@ -1,11 +1,12 @@
 const { JobModel } = require("../models/Job");
+const { ProfessionalModel } = require("../models/professionalModel");
 const { validateJob } = require("../validation/jobValidation")
 
 
 exports.jobCtrl = {
 
     createJob: async (req, res) => {
-        job.client_id = req.tokenData.user_id;
+        req.body.client_id = req.tokenData.user_id;
 
         let validBody = validateJob(req.body);
         if (validBody.error) {
@@ -31,15 +32,21 @@ exports.jobCtrl = {
     },
 
     updateJobDetails: async (req, res) => {
+        req.body.client_id = req.tokenData.user_id;
+
         let validBody = validateJob(req.body)
         if (validBody.error) {
             return res.status(400).json(validBody.error.details);
         }
 
-        let jobId = req.body.job_id
+        let jobId = req.params.job_id
 
         try {
-            let job = await JobModel.updateOne({ _id: jobId, client_id: req.tokenData.user_id }, req.body);
+            let job = await JobModel.findOneAndUpdate({ _id: jobId, client_id: req.tokenData.user_id }, req.body);
+            if (!job) {
+                res.status(400).send("no job to update")
+
+            }
             res.status(200).send(job)
         }
         catch (err) {
@@ -48,7 +55,7 @@ exports.jobCtrl = {
     },
 
     deleteJob: async (req, res) => {
-        let jobId = req.body.job_id
+        let jobId = req.params.job_id
 
         try {
             const updatedJob = await JobModel.findOneAndUpdate(
@@ -75,7 +82,10 @@ exports.jobCtrl = {
     },
 
     getProfessionalOpenJobs: async (req, res) => {
-        let professional_id = req.tokenData.user_id
+        let user_id = req.tokenData.user_id
+        let professional_id=(await ProfessionalModel.findOne({user_id}))._id
+
+        console.log(professional_id);
 
         try {
             let jobs = []
@@ -83,7 +93,7 @@ exports.jobCtrl = {
 
             const allJobs = await JobModel.find({
                 time: { $gte: currentDateTime },
-                contracted_professional: { $ne: null }
+                contracted_professional: null
             })
 
             allJobs.forEach(job => {
@@ -162,12 +172,17 @@ exports.jobCtrl = {
         }
     },
 
-    addFinalProffessional: async (req, res) => {
+    addContractedProffessional: async (req, res) => {
         let professionalID = req.tokenData.user_id
         let jobId = req.params.job_id
 
         try {
-            const job = await JobModel.findOneAndUpdate({ _id: jobId, contracted_professional: { $ne: null } }, { isCanceled: false }, { contracted_professional: professionalID })
+            const job = await JobModel.findOneAndUpdate({
+                _id: jobId,
+                contracted_professional: null,
+                isCanceled: false
+            },
+                { contracted_professional: professionalID })
             res.json(job)
         }
         catch (err) {

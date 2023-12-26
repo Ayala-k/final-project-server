@@ -2,7 +2,7 @@ const Joi = require("joi");
 
 exports.validateProfessional = (_reqBody) =>{
     let schemaJoi = Joi.object({
-        user_name: Joi.string().min(2).max(15).required(),
+        user_id: Joi.string().min(2).required(),
         profession: Joi.string().min(2).max(100).required(),
         specializations: Joi.array().items(
             Joi.object({

@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post("/create_professional", authUser, professionalCtrl.createProfessional)
 
-router.put('/update_professional',professionalCtrl.updateProfessional)
+router.put('/update_professional',authUser,professionalCtrl.updateProfessional)
 
 router.get('/search_professional',authUser,professionalCtrl.searchProfessional)
 

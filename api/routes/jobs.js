@@ -7,9 +7,9 @@ const router = express.Router();
 
 router.post('/create_job',authUser,jobCtrl.createJob)
 
-router.put('/update_job_details',authUser,jobCtrl.updateJobDetails)
+router.put('/update_job/:job_id',authUser,jobCtrl.updateJobDetails)
 
-router.patch('/delete_job',authUser,jobCtrl.deleteJob)
+router.patch('/delete_job/:job_id',authUser,jobCtrl.deleteJob)
 
 router.get('/get_client_jobs',authUser,jobCtrl.getClientJobs)
 
@@ -19,6 +19,6 @@ router.get('/get_professional_contracted_jobs',authUser,jobCtrl.getProfessionalC
 
 router.patch('/remove_professional_from_job/:job_id',authUser,jobCtrl.removeProfessionalFromJob)
 
-
+router.put('/add_contracted_professional/:job_id',authUser,jobCtrl.addContractedProffessional)
 
 module.exports = router;
