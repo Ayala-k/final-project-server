@@ -11,14 +11,6 @@ router.put('/update_job_details',authUser,jobCtrl.updateJobDetails)
 
 router.patch('/delete_job',authUser,jobCtrl.deleteJob)
 
-router.get('/get_client_jobs',authUser,jobCtrl.getClientJobs)
-
-router.get('/get_professional_open_jobs',authUser,jobCtrl.getProfessionalOpenJobs)
-
-router.get('/get_professional_contracted_jobs',authUser,jobCtrl.getProfessionalContractedJobs)
-
-router.patch('/remove_professional_from_job/:job_id',authUser,jobCtrl.removeProfessionalFromJob)
-
-
+//router.get('/get_client_jobs',authUser,jobCtrl.getClientJobs)
 
 module.exports = router;

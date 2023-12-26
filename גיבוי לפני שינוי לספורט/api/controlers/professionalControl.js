@@ -1,7 +1,6 @@
 const { ProfessionalModel } = require("../models/professionalModel");
 const { commentCtrl } = require("./commentControl");
 
-
 exports.professionalCtrl = {
 
     createProfessional: async (req, res) => {
@@ -48,9 +47,9 @@ exports.professionalCtrl = {
         }
     },
 
-    searchProfessional: async (req, res) => {//add price!!!
+    searchProfessional: async (req, res) => {
         try {
-            const { name, profession, specialization, minimalRating, minimalPricePerHour, maximalPriceRating } = req.query;
+            const { name, profession, specialization, minimalRating } = req.query;
 
             const query = {};
 
@@ -61,17 +60,7 @@ exports.professionalCtrl = {
             }
 
             if (profession) {
-                query.profession = { $in: profession.split(',') }
-
-                if (minimalPricePerHour && maximalPriceRating) {
-                    query.price_per_hour = { $gte: minimalPricePerHour, $ste: maximalPriceRating }
-                }
-                else if (minimalPricePerHour) {
-                    query.price_per_hour = { $gte: minimalPricePerHour }
-                }
-                else if (maximalPriceRating) {
-                    query.price_per_hour = { $ste: maximalPriceRating }
-                }
+                query.profession = { $in: profession.split(',') };
             }
 
             if (specialization) {

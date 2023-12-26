@@ -3,7 +3,6 @@ const bcrypt = require("bcrypt");
 const { userValidation, loginValidation } = require("../validation/userValidation");
 const { createToken } = require("../helpers/tokenCreation");
 
-
 exports.userCtrl = {
 
   login: async (req, res) => {
@@ -135,4 +134,5 @@ exports.userCtrl = {
       res.status(500).json({ msg: "err", err })
     }
   }
+  
 }

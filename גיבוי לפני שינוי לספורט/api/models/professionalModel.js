@@ -4,7 +4,8 @@ const professionalSchema = new mongoose.Schema({
   user_id: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
   profession: String,
   specializations: {
-    type: [{ specialization_name: String, price_per_hour: Number }],
+    type: [String],
+    default: [],
   },
   information: String
 })
