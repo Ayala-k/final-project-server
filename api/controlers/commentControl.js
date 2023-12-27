@@ -15,7 +15,7 @@ exports.commentCtrl = {
         try {
             let comment = new CommentModel(req.body);
             await comment.save();
-            res.status(201).json(user);
+            res.status(201).json(comment);
         }
 
         catch (err) {
@@ -42,7 +42,7 @@ exports.commentCtrl = {
         let professional = req.params.professional_id
 
         try {
-            res.json(await getRating(professional, null))
+            res.json(await this.commentCtrl.getRating(professional, null))
         }
 
         catch (err) {
@@ -56,7 +56,7 @@ exports.commentCtrl = {
         let specialization = req.params.specialization
 
         try {
-            res.json(await getRating(professional, specialization))
+            res.json(await this.commentCtrl.getRating(professional, specialization))
         }
 
         catch (err) {
@@ -65,7 +65,7 @@ exports.commentCtrl = {
         }
     },
 
-    async getRating(professional_id, specialization) {
+    getRating: async (professional_id, specialization) => {
         let comments = []
         if (specialization == null) {
             comments = await CommentModel.find({ professional_id })

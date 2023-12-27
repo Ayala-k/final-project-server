@@ -61,16 +61,15 @@ exports.professionalCtrl = {
 
             let professionals = await ProfessionalModel.find(query).populate('user_id');
 
-            // if (minimalRating) {
-            //     const filteredProfessionals = await Promise.all(
-            //         professionals.map(async (p) => {
-            //             const rating = await commentCtrl.getRating(p._id, specialization);
-            //             return rating >= minimalRating ? p : null;
-            //         })
-            //     );
-
-            //     professionals = filteredProfessionals.filter((p) => p !== null);
-            // }
+            if (minimalRating) {
+                const filteredProfessionals = await Promise.all(
+                    professionals.map(async (p) => {
+                        const rating = await commentCtrl.getRating(p._id, specialization);
+                        return rating >= minimalRating ? p : null;
+                    })
+                );
+                professionals = filteredProfessionals.filter((p) => p !== null);
+            }
 
             if (specialization) {
                 let splittedArray = specialization.split(',')

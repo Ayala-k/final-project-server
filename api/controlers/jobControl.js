@@ -1,7 +1,7 @@
 const { JobModel } = require("../models/Job");
 const { ProfessionalModel } = require("../models/professionalModel");
 const { validateJob } = require("../validation/jobValidation")
-
+const { sendEmail } = require('../helpers/sendEmail')
 
 exports.jobCtrl = {
 
@@ -16,13 +16,11 @@ exports.jobCtrl = {
         try {
             let job = await new JobModel(req.body);
             await job.save();
-
-            // let jobOffer = new JobOfferModel({
-            //     job_id: job._id,
-            //     amount_of_needed: req.body.amount_of_needed,
-            //     optional_professionals: req.body.optional_professionals
-            // })
-            //await jobOffer.save()
+            job.optional_professionals.forEach(async (p) => {
+                let email = (await ProfessionalModel.findOne({ _id: p }).populate('user_id')).user_id.email
+                console.log(email);
+                sendEmail(email, 'new job is waiting for you!', JSON.stringify(job))
+            });
 
             res.status(200).send({ job })
         }
@@ -42,10 +40,15 @@ exports.jobCtrl = {
         let jobId = req.params.job_id
 
         try {
-            let job = await JobModel.findOneAndUpdate({ _id: jobId, client_id: req.tokenData.user_id }, req.body);
+            let job = await JobModel.findOneAndUpdate({ _id: jobId, client_id: req.tokenData.user_id },
+                req.body,
+                { new: true });
             if (!job) {
                 res.status(400).send("no job to update")
-
+            }
+            if (job.contracted_professional) {
+                let email = (await ProfessionalModel.findOne({ _id: job.contracted_professional }).populate('user_id')).user_id.email
+                sendEmail(email, 'job has changed', JSON.stringify(job))
             }
             res.status(200).send(job)
         }
@@ -63,6 +66,10 @@ exports.jobCtrl = {
                 { $set: { isCanceled: true } },
                 { new: true }
             );
+            if (updatedJob.contracted_professional) {
+                let email = (await ProfessionalModel.findOne({ _id: updatedJob.contracted_professional }).populate('user_id')).user_id.email
+                sendEmail(email, 'job has deleted', JSON.stringify(updatedJob))
+            }
             res.json(updatedJob)
         }
         catch (err) {
@@ -83,7 +90,7 @@ exports.jobCtrl = {
 
     getProfessionalOpenJobs: async (req, res) => {
         let user_id = req.tokenData.user_id
-        let professional_id=(await ProfessionalModel.findOne({user_id}))._id
+        let professional_id = (await ProfessionalModel.findOne({ user_id }))._id
 
         try {
             let jobs = []
@@ -94,8 +101,8 @@ exports.jobCtrl = {
                 contracted_professional: null
             })
 
-            allJobs.forEach(j=>{
-                if(j.optional_professionals.includes(professional_id)){
+            allJobs.forEach(j => {
+                if (j.optional_professionals.includes(professional_id)) {
                     jobs.push(j)
                 }
             })
@@ -103,17 +110,17 @@ exports.jobCtrl = {
             res.json(jobs)
         }
         catch (err) {
-            res.status(500).json({"error":err})
+            res.status(500).json({ "error": err })
         }
     },
 
     getProfessionalContractedJobs: async (req, res) => {
         let user_id = req.tokenData.user_id
-        let professional_id=(await ProfessionalModel.findOne({user_id}))._id
+        let professional_id = (await ProfessionalModel.findOne({ user_id }))._id
 
         try {
             const currentDateTime = new Date()
-            
+
             const jobs = await JobModel.find({
                 time: { $gte: currentDateTime },
                 contracted_professional: professional_id
@@ -131,7 +138,7 @@ exports.jobCtrl = {
     removeProfessionalFromJob: async (req, res) => {
         let user_id = req.tokenData.user_id
         let jobId = req.params.job_id
-        let professional_id=(await ProfessionalModel.findOne({user_id}))._id
+        let professional_id = (await ProfessionalModel.findOne({ user_id }))._id
 
         const job = await JobModel.findOne({ _id: jobId, contracted_professional: professional_id })
 
@@ -145,11 +152,13 @@ exports.jobCtrl = {
                 return res.status(400).json('too late to cancel')
             }
             else {
-                await JobModel.findOneAndUpdate(
+                let updatedJob = await JobModel.findOneAndUpdate(
                     { _id: jobId, contracted_professional: professional_id },
                     { contracted_professional: null },
                     { new: true }
                 )
+                let email = (await JobModel.findOne({ _id: jobId }).populate('client_id')).client_id.email
+                sendEmail(email, 'the professional leaved yor job):', JSON.stringify(updatedJob))
                 res.json('removed')
             }
         }
@@ -161,19 +170,24 @@ exports.jobCtrl = {
     addContractedProffessional: async (req, res) => {
         let user_id = req.tokenData.user_id
         let jobId = req.params.job_id
-        let professional_id=(await ProfessionalModel.findOne({user_id}))._id
+        let professional_id = (await ProfessionalModel.findOne({ user_id }))._id
 
         try {
-            const job = await JobModel.findOneAndUpdate({
+            const updatedJob = await JobModel.findOneAndUpdate({
                 _id: jobId,
                 contracted_professional: null,
                 isCanceled: false
             },
                 { contracted_professional: professional_id })
-            res.json(job)
+            if (updatedJob) {
+                let email = (await JobModel.findOne({ _id: jobId }).populate('client_id')).client_id.email
+                sendEmail(email, 'a professional joined your job ):', JSON.stringify(updatedJob))
+            }
+
+            res.json(updatedJob)
         }
         catch (err) {
-            res.status(500).json({error:err})
+            res.status(500).json({ error: err })
         }
     }
 }  

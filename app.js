@@ -5,6 +5,7 @@ const cors = require("cors");
 const { routesInit } = require("./api/routes/config_routes")
 require("./api/db/mongoconnect");
 const cookieParser = require('cookie-parser')
+require('./api/helpers/dailyEmails')
 
 const app = express();
 

@@ -2,14 +2,18 @@ const express = require("express");
 const { authUser, authAdmin } = require("../middlewares/auth");
 const { userCtrl } = require("../controlers/userControl");
 const {  sendEmail } = require("../helpers/sendEmail");
+const { date } = require("../helpers/sendEmail");
 
 
 
 const router = express.Router();
 
-router.get('/sendmail',(req,res)=>{
-    sendEmail()
-})
+// //delete
+// router.get('/date',async(req,res)=>{
+//     await date();
+//     res.json("sent!!!")
+// })
+
 router.post("/signup", userCtrl.signUp)
 
 router.post("/login", userCtrl.login)

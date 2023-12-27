@@ -9,7 +9,7 @@ exports.validateJob = (_reqBody) => {
         },
         time: Joi.date().required(),
         duration_in_hours: Joi.number().min(0.5).max(3).required(),
-        description: Joi.string().min(20).max(100).required(),
+        description: Joi.string().min(2).max(100).required(),
         optional_professionals: Joi.array().items(Joi.string()),
         //payment:Joi.number().min(0).required()
     }) 
