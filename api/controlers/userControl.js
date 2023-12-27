@@ -1,7 +1,8 @@
-                                                                                                  const { UserModel } = require("../models/userModel");
+const { UserModel } = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const { userValidation, loginValidation } = require("../validation/userValidation");
-const { createToken } = require("../helpers/tokenCreation");
+const { createToken, createResetToken } = require("../helpers/tokenCreation");
+const { sendEmail } = require("../helpers/sendEmail");
 
 
 exports.userCtrl = {
@@ -93,7 +94,7 @@ exports.userCtrl = {
       if (!samePasswords && req.body.password != user.password) {
         return res.status(400).json("can not change password")
       }
-      req.body.password=user.password
+      req.body.password = user.password
       await UserModel.updateOne({ _id: req.tokenData.user_id }, req.body);
       res.status(201).json("changed succesfully");
     }
@@ -109,7 +110,7 @@ exports.userCtrl = {
     try {
       const updatedUser = await UserModel.findOneAndUpdate(
         { _id: user_id },
-        { $set: { isBlocked:true } },
+        { $set: { isBlocked: true } },
         { new: true }
       );
       res.json(updatedUser)
@@ -134,5 +135,62 @@ exports.userCtrl = {
     catch (err) {
       res.status(500).json({ msg: "err", err })
     }
+  },
+
+  resetPassword: async (req, res) => {
+    const resetToken = req.params.reset_token
+    const encryptedResetToken = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+    const newPassword = req.body.new_password;
+    const confirmNewPassword = req.body.confirm_new_password;
+    if (newPassword != confirmNewPassword) {
+      res.status(400).json('different passswords')
+    }
+    try {
+      const user = UserModel.findOneAndUpdate({
+        reset_token: encryptedResetToken,
+        passwordResetExpires: { $gt: Date.now() }
+      },
+        {
+          password: newPassword,
+          reset_token: null,
+          reset_token_expired: null
+        },
+        { new: true })
+
+      if (!user)
+        res.status(400).json('Token is expired or wrong');
+    }
+    catch (err) {
+      res.status(500).json(err)
+    }
+  },
+
+  forgotPassword: async (req, res) => {
+    const email = req.body.email
+    const { passwordResetToken, passwordResetExpires } = createResetToken()
+    console.log(passwordResetToken);
+    try{
+      const user = await UserModel.findOneAndUpdate({ email },
+        {
+          phone:8888888,
+          password_reset_token: passwordResetToken,
+          password_reset_expires: passwordResetExpires
+        },
+        { new: true })
+      if(user){
+        sendEmail(email,'reset password',passwordResetToken)//send url
+      }
+      res.status(200).json(user)
+    }
+    catch(err){
+      res.status(500).json(err)
+    }
+
   }
 }
+
+
+

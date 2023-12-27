@@ -26,5 +26,7 @@ router.patch('/block', authAdmin, userCtrl.blockUser)
 
 router.patch('/change_password', authUser, userCtrl.changePassword)
 
+router.put('/forgot_password', userCtrl.forgotPassword)
+
 
 module.exports = router;
