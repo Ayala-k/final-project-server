@@ -85,17 +85,6 @@ exports.professionalCtrl = {
                     return flag
                 })
 
-                // if(maximalPriceRating){
-                //     professionals = professionals.filter(p => {
-                //         let flag = false
-                //          p.specializations.forEach(s => {
-                //             if (splittedArray.includes(s.specialization_name)) {
-                //                 flag = true
-                //             }
-                //          })
-                //          return flag
-                //     })
-                // }
             }
 
             if (name) {
