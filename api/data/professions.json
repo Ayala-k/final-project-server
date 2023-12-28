@@ -1,5 +1,39 @@
 [
     {
+        "profession": "trainer",
+        "specializations": [
+            "football coach",
+            "basketball coach",
+            "tennis instructor",
+            "swimming coach",
+            "gymnastics trainer",
+            "yoga instructor",
+            "boxing coach",
+            "volleyball coach",
+            "golf instructor",
+            "karate instructor",
+            "cycling coach",
+            "skiing instructor",
+            "surfing coach",
+            "pilates instructor",
+            "running coach",
+            "strength and conditioning coach",
+            "triathlon coach",
+            "dance instructor",
+            "crossfit coach",
+            "climbing instructor",
+            "martial arts trainer",
+            "baseball coach",
+            "softball coach",
+            "table tennis coach",
+            "judo instructor",
+            "horse riding instructor",
+            "archery coach",
+            "fencing coach",
+            "synchronized swimming coach"
+        ]
+    },
+    {
         "profession": "accountant",
         "specializations": [
             "tax accountant",
