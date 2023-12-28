@@ -34,7 +34,7 @@ exports.userCtrl = {
       //   httpOnly: false
       // })
       // Send the token in the 'Authorization' header with the 'Bearer' scheme
-      res.header('Authorization', `Bearer ${token}`).json({ message: 'Token generated successfully',token });
+      res.header('Authorization', `Bearer ${token}`).json({ message: 'Token generated successfully',token:`Bearer ${token}` });
     }
 
     catch (err) {
@@ -62,7 +62,7 @@ exports.userCtrl = {
       //   httpOnly: false
       // })
       //   .json(user);
-      res.header('Authorization', `Bearer ${token}`).json({ message: 'Token generated successfully',token,user });
+      res.header('Authorization', `Bearer ${token}`).json({ message: 'Token generated successfully',token:`Bearer ${token}`,user });
     }
 
     catch (err) {
