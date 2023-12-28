@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const { config } = require('../config/secret');
 
 function sendEmail(to, subject, text) {
     var transporter = nodemailer.createTransport({
@@ -6,13 +7,13 @@ function sendEmail(to, subject, text) {
         port: 587,
         secure: false,
         auth: {
-            user: '2f89c7be77d8e6',
-            pass: '3fb6b0235e543c',
+            user: config.mailTrapUser,
+            pass: config.mailTrapPass,
         },
     });
 
     var mailOptions = {
-        from: 'ayalakdeveloper@gmail.com',
+        from: config.emailAddress,
         to: to,
         subject: subject,
         text: text
