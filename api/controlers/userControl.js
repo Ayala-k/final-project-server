@@ -1,5 +1,6 @@
 const { UserModel } = require("../models/userModel");
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 const { userValidation, loginValidation } = require("../validation/userValidation");
 const { createToken, createResetToken } = require("../helpers/tokenCreation");
 const { sendEmail } = require("../helpers/sendEmail");
@@ -139,30 +140,40 @@ exports.userCtrl = {
 
   resetPassword: async (req, res) => {
     const resetToken = req.params.reset_token
-    const encryptedResetToken = crypto
-      .createHash("sha256")
-      .update(resetToken)
-      .digest("hex");
+    // const encryptedResetToken = crypto
+    //   .createHash("sha256")
+    //   .update(resetToken)
+    //   .digest("hex");
     const newPassword = req.body.new_password;
     const confirmNewPassword = req.body.confirm_new_password;
     if (newPassword != confirmNewPassword) {
       res.status(400).json('different passswords')
     }
+    let encryptedPasssword = await bcrypt.hash(newPassword, 10);
+    //let encryptedPasssword =newPassword;
     try {
-      const user = UserModel.findOneAndUpdate({
-        reset_token: encryptedResetToken,
-        passwordResetExpires: { $gt: Date.now() }
+      console.log(resetToken);
+      //  console.log(encryptedResetToken);
+      //     console.log(resetToken);
+      const user = await UserModel.findOneAndUpdate({
+        password_reset_token: resetToken,
+        password_reset_expires: { $gt: Date.now() }
       },
         {
-          password: newPassword,
-          reset_token: null,
-          reset_token_expired: null
+          password: encryptedPasssword,
+          password_reset_token: null,
+          password_reset_expires: null
         },
         { new: true })
 
-      if (!user)
+      if (!user) {
         res.status(400).json('Token is expired or wrong');
+      }
+
+      user.password = "********";
+      res.json(user)
     }
+
     catch (err) {
       res.status(500).json(err)
     }
@@ -172,20 +183,19 @@ exports.userCtrl = {
     const email = req.body.email
     const { passwordResetToken, passwordResetExpires } = createResetToken()
     console.log(passwordResetToken);
-    try{
+    try {
       const user = await UserModel.findOneAndUpdate({ email },
         {
-          phone:8888888,
           password_reset_token: passwordResetToken,
           password_reset_expires: passwordResetExpires
         },
         { new: true })
-      if(user){
-        sendEmail(email,'reset password',passwordResetToken)//send url
+      if (user) {
+        sendEmail(email, 'reset password', passwordResetToken)//send url
       }
       res.status(200).json(user)
     }
-    catch(err){
+    catch (err) {
       res.status(500).json(err)
     }
 

@@ -9,6 +9,7 @@ let userSchema = new mongoose.Schema({
   email: String,
   phone: Number,
   password: String,
+  
   role: {
     type: String, default: "client", enum: ["admin", "professional", "client"]
   },
@@ -18,6 +19,15 @@ let userSchema = new mongoose.Schema({
   isBlocked: {
     type: Boolean,
     default: false,
+  },
+
+  password_reset_token:{
+    type: String,
+    default: null,
+  },
+  password_reset_expires:{
+    type: Date,
+    default: null,
   }
 })
 

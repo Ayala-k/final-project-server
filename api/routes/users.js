@@ -1,8 +1,6 @@
 const express = require("express");
 const { authUser, authAdmin } = require("../middlewares/auth");
 const { userCtrl } = require("../controlers/userControl");
-const {  sendEmail } = require("../helpers/sendEmail");
-const { date } = require("../helpers/sendEmail");
 
 
 
@@ -27,6 +25,8 @@ router.patch('/block', authAdmin, userCtrl.blockUser)
 router.patch('/change_password', authUser, userCtrl.changePassword)
 
 router.put('/forgot_password', userCtrl.forgotPassword)
+
+router.put('/reset_password/:reset_token', userCtrl.resetPassword)
 
 
 module.exports = router;
