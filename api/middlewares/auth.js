@@ -2,7 +2,9 @@ const jwt = require("jsonwebtoken");
 const {config} = require("../config/secret")
 
 exports.authUser = (req,res,next) => {
-  let token = req.cookies.access_token
+  const authHeader = req.headers['authorization'];
+
+  const token = authHeader.slice(7);
   if(!token){
     return res.status(401).json({msg:"You need to send token to this endpoint url"})
   }
@@ -21,7 +23,9 @@ exports.authUser = (req,res,next) => {
 
 
 exports.authAdmin = (req,res,next) => {
-  let token = req.cookies.access_token
+  const authHeader = req.headers['authorization'];
+
+  const token = authHeader.slice(7);
   if(!token){
     return res.status(401).json({msg:"You need to send token to this endpoint url"})
   }

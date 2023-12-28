@@ -29,11 +29,12 @@ exports.userCtrl = {
       }
 
       let token = createToken(user._id, user.role);
-      res.cookie('access_token', token, {
-        maxAge: 60 * 60 * 1000,
-        httpOnly: true
-      })
-      res.json("sent token in cookie")
+      // res.cookie('access_token', token, {
+      //   maxAge: 60 * 60 * 1000,
+      //   httpOnly: false
+      // })
+      // Send the token in the 'Authorization' header with the 'Bearer' scheme
+      res.header('Authorization', `Bearer ${token}`).json({ message: 'Token generated successfully' });
     }
 
     catch (err) {
@@ -56,11 +57,12 @@ exports.userCtrl = {
       user.password = "********";
 
       let token = createToken(user._id, user.role);
-      res.cookie('access_token', token, {
-        maxAge: 60 * 60 * 1000,
-        httpOnly: true
-      })
-      res.status(201).json(user);
+      // res.cookie('access_token', token, {
+      //   maxAge: 60 * 60 * 1000,
+      //   httpOnly: false
+      // })
+      //   .json(user);
+      res.header('Authorization', `Bearer ${token}`).json({ message: 'Token generated successfully',user });
     }
 
     catch (err) {
