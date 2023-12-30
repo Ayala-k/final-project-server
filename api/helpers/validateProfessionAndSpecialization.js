@@ -1,7 +1,7 @@
 const long_profession_list=require('../data/professions.json')
 
 
-export const isProfession = (inputString) => {
+exports.isProfession = (inputString) => {
     const lowercaseInput = inputString.toLowerCase();
 
     return long_profession_list.some((professionObj) =>
@@ -9,7 +9,7 @@ export const isProfession = (inputString) => {
     );
 }
 
-export const isSpecializationOfProfession = (profession, specialization) => {
+exports.isSpecializationOfProfession = (profession, specialization) => {
     const lowercaseProfession = profession.toLowerCase();
     const lowercaseSpecialization = specialization.toLowerCase();
 
