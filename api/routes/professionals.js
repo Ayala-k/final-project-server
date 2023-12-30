@@ -11,4 +11,6 @@ router.put('/update_professional',authUser,professionalCtrl.updateProfessional)
 
 router.get('/search_professional',authUser,professionalCtrl.searchProfessional)
 
+router.get('/get_specializations_by_profession/:profession',professionalCtrl.getSpecializationsByprofession)
+
 module.exports = router;

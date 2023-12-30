@@ -3,6 +3,7 @@ const { ProfessionalModel } = require("../models/professionalModel");
 const { UserModel } = require("../models/userModel");
 const { validateProfessional } = require("../validation/professionalValidation");
 const { commentCtrl } = require("./commentControl");
+const profession_list=require('../data/professions.json')
 
 
 exports.professionalCtrl = {
@@ -129,5 +130,14 @@ exports.professionalCtrl = {
         catch (err) {
             res.status(500).json({"ERROR: ": err});
         }
+    },
+
+    getSpecializationsByprofession:async(req,res)=>{
+        let profession=req.params.profession
+        profession_list.forEach(p=>{
+            if(p.profession==profession)
+            return res.json(p.specializations)
+        })
+        res.json([])
     }
 }
