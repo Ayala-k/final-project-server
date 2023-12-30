@@ -3,7 +3,7 @@ const { ProfessionalModel } = require("../models/professionalModel");
 const { UserModel } = require("../models/userModel");
 const { validateProfessional } = require("../validation/professionalValidation");
 const { commentCtrl } = require("./commentControl");
-const profession_list=require('../data/professions.json')
+const profession_list = require('../data/professions.json')
 
 
 exports.professionalCtrl = {
@@ -13,13 +13,13 @@ exports.professionalCtrl = {
 
         let validBody = validateProfessional(req.body);
         if (validBody.error) {
-            return res.status(400).json({"ERROR: invalid professional details":validBody.error.details});
+            return res.status(400).json({ "ERROR: invalid professional details": validBody.error.details });
         }
         if (!isProfession(req.body.profession)) {
             return res.status(400).json("ERROR: invalid profession");
         }
-        req.body.specializations.forEach(s=>{
-            if(!isSpecializationOfProfession(req.body.profession,s.specialization_name)){
+        req.body.specializations.forEach(s => {
+            if (!isSpecializationOfProfession(req.body.profession, s.specialization_name)) {
                 return res.status(400).json("ERROR: invalid specialization");
             }
         })
@@ -36,7 +36,7 @@ exports.professionalCtrl = {
             res.json(professional)
         }
         catch (err) {
-            res.status(500).json({"ERROR: ": err})
+            res.status(500).json({ "ERROR: ": err })
         }
 
     },
@@ -46,7 +46,7 @@ exports.professionalCtrl = {
 
         let validBody = validateProfessional(req.body);
         if (validBody.error) {
-            return res.status(400).json({"ERROR: invalid professional details":validBody.error.details});
+            return res.status(400).json({ "ERROR: invalid professional details": validBody.error.details });
         }
 
         try {
@@ -63,7 +63,7 @@ exports.professionalCtrl = {
         }
 
         catch (err) {
-            res.status(500).json({"ERROR: ": err})
+            res.status(500).json({ "ERROR: ": err })
         }
     },
 
@@ -128,16 +128,25 @@ exports.professionalCtrl = {
             res.status(200).json({ professionals });
         }
         catch (err) {
-            res.status(500).json({"ERROR: ": err});
+            res.status(500).json({ "ERROR: ": err });
         }
     },
 
-    getSpecializationsByprofession:async(req,res)=>{
-        let profession=req.params.profession
-        profession_list.forEach(p=>{
-            if(p.profession==profession)
-            return res.json(p.specializations)
-        })
-        res.json([])
+    getSpecializationsByprofession: async (req, res) => {
+        try {
+            let profession = req.params.profession;
+            let specializations = [];
+
+            profession_list.forEach(p => {
+                if (p.profession === profession) {
+                    specializations = p.specializations;
+                }
+            });
+
+            res.json(specializations);
+        }
+        catch (error) {
+            res.status(500).json({ "ERROR: ": err });
+        }
     }
 }

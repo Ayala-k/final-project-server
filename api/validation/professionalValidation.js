@@ -10,7 +10,7 @@ exports.validateProfessional = (_reqBody) =>{
               price_per_hour: Joi.number().min(0).max(1000).required(),
             })
           ),
-        information:Joi.string().min(20).max(100).required()       
+        information:Joi.string().min(20).max(100)       
     })
     return schemaJoi.validate(_reqBody);
 }
