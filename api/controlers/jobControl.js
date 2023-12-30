@@ -11,7 +11,7 @@ exports.jobCtrl = {
 
         let validBody = validateJob(req.body);
         if (validBody.error || req.body.optional_professionals.length < 1) {
-            return res.status(400).json("ERROR: invalid job details", validBody.error.details);
+            return res.status(400).json({"ERROR: invalid job details": validBody.error.details});
         }
 
         let job
@@ -21,7 +21,7 @@ exports.jobCtrl = {
             await job.save();
         }
         catch (err) {
-            return res.status(500).json("ERROR", err);
+            return res.status(500).json({"ERROR: ": err});
         }
 
         try {
@@ -32,7 +32,7 @@ exports.jobCtrl = {
             res.status(201).send({ job })
         }
         catch (err) {
-            return res.status(201).json("ERROR: Failure while notifying optional professionals", job);
+            return res.status(201).json({"ERROR: Failure while notifying optional professionals": job});
         }
     },
 
@@ -41,7 +41,7 @@ exports.jobCtrl = {
 
         let validBody = validateJob(req.body)
         if (validBody.error || req.body.optional_professionals.length < 1) {
-            return res.status(400).json("ERROR: invalid job details", validBody.error.details);
+            return res.status(400).json({"ERROR: invalid job details": validBody.error.details});
         }
 
         let jobId = req.params.job_id
@@ -63,14 +63,14 @@ exports.jobCtrl = {
                     sendEmail(email, 'job has changed', JSON.stringify(job))
                 }
                 catch (err) {
-                    return res.status(201).json("ERROR: Failure while notifying contracted professional", job);
+                    return res.status(201).json({"ERROR: Failure while notifying contracted professional": job});
                 }
             }
 
             res.json(job)
         }
         catch (err) {
-            return res.status(500).json("ERROR: ", err);
+            return res.status(500).json({"ERROR: ": err});
         }
     },
 
@@ -94,7 +94,7 @@ exports.jobCtrl = {
                     sendEmail(email, 'job has deleted', JSON.stringify(updatedJob))
                 }
                 catch (err) {
-                    return res.status(201).json("ERROR: Failure while notifying contracted professional", updatedJob);
+                    return res.status(201).json({"ERROR: Failure while notifying contracted professional": updatedJob});
                 }
             }
 
@@ -102,7 +102,7 @@ exports.jobCtrl = {
         }
 
         catch (err) {
-            return res.status(500).json("ERROR: ", err);
+            return res.status(500).json({"ERROR: ": err});
         }
     },
 
@@ -114,7 +114,7 @@ exports.jobCtrl = {
             res.json(jobs)
         }
         catch (err) {
-            res.status(500).json("ERROR: ", err)
+            res.status(500).json({"ERROR: ": err})
         }
     },
 
@@ -145,7 +145,7 @@ exports.jobCtrl = {
             res.json(jobs)
         }
         catch (err) {
-            res.status(500).json("ERROR", err)
+            res.status(500).json({"ERROR: ": err})
         }
     },
 
@@ -170,7 +170,7 @@ exports.jobCtrl = {
 
         }
         catch (err) {
-            res.status(500).json("ERROR: ", err)
+            res.status(500).json({"ERROR: ": err})
         }
 
     },
@@ -212,14 +212,14 @@ exports.jobCtrl = {
                     sendEmail(email, 'the professional leaved yor job):', JSON.stringify(updatedJob))
                 }
                 catch (err) {
-                    return res.status(201).json("ERROR: Failure while notifying client", updatedJob);
+                    return res.status(201).json({"ERROR: Failure while notifying client": updatedJob});
                 }
 
                 res.json(updatedJob)
             }
         }
         else {
-            return res.status(500).json("ERROR: ", err)
+            return res.status(500).json({"ERROR: ": err})
         }
     },
 
@@ -255,14 +255,14 @@ exports.jobCtrl = {
                 sendEmail(email, 'a professional joined your job ):', JSON.stringify(updatedJob))
                 }
                 catch(err){
-                    return res.status(201).json("ERROR: Failure while notifying client", updatedJob);
+                    return res.status(201).json({"ERROR: Failure while notifying client": updatedJob});
                 }
             }
 
             res.json(updatedJob)
         }
         catch (err) {
-            res.status(500).json("ERROR: ",err)
+            res.status(500).json({"ERROR: ": err})
         }
     }
 }  

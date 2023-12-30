@@ -11,7 +11,7 @@ exports.commentCtrl = {
 
         let validBody = validateComment(req.body)
         if (validBody.error) {
-            return res.status(400).json("ERROR: invalid comment details",validBody.error.details);
+            return res.status(400).json({"ERROR: invalid comment details":validBody.error.details});
         }
 
         try {
@@ -22,7 +22,7 @@ exports.commentCtrl = {
 
         catch (err) {
             console.log(err);
-            res.status(500).json({ msg: "ERROR", err })
+            res.status(500).json({"ERROR: ": err})
         }
     },
 
@@ -36,7 +36,7 @@ exports.commentCtrl = {
 
         catch (err) {
             console.log(err);
-            res.status(500).json({ msg: "ERROR", err })
+            res.status(500).json({"ERROR: ": err})
         }
     },
 
@@ -49,7 +49,7 @@ exports.commentCtrl = {
 
         catch (err) {
             console.log(err);
-            res.status(500).json({ msg: "ERROR", err })
+            res.status(500).json({"ERROR: ": err})
         }
     },
 
@@ -68,13 +68,13 @@ exports.commentCtrl = {
 
         catch (err) {
             console.log(err);
-            res.status(500).json({ msg: "ERROR", err })
+            res.status(500).json({"ERROR: ": err})
         }
     },
 
     getRating: async (professional_id, specialization) => {
         let comments = []
-        
+
         if (specialization == null) {
             comments = await CommentModel.find({ professional_id })
         }

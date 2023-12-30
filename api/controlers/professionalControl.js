@@ -12,7 +12,7 @@ exports.professionalCtrl = {
 
         let validBody = validateProfessional(req.body);
         if (validBody.error) {
-            return res.status(400).json("ERROR: invalid professional details",validBody.error.details);
+            return res.status(400).json({"ERROR: invalid professional details":validBody.error.details});
         }
         if (!isProfession(req.body.profession)) {
             return res.status(400).json("ERROR: invalid profession");
@@ -35,7 +35,7 @@ exports.professionalCtrl = {
             res.json(professional)
         }
         catch (err) {
-            res.status(500).json("ERROR: ", err)
+            res.status(500).json({"ERROR: ": err})
         }
 
     },
@@ -45,7 +45,7 @@ exports.professionalCtrl = {
 
         let validBody = validateProfessional(req.body);
         if (validBody.error) {
-            return res.status(400).json(validBody.error.details);
+            return res.status(400).json({"ERROR: invalid professional details":validBody.error.details});
         }
 
         try {
@@ -62,7 +62,7 @@ exports.professionalCtrl = {
         }
 
         catch (err) {
-            res.status(500).json("ERROR: ",err)
+            res.status(500).json({"ERROR: ": err})
         }
     },
 
@@ -127,7 +127,7 @@ exports.professionalCtrl = {
             res.status(200).json({ professionals });
         }
         catch (err) {
-            res.status(500).json("ERROR: ",err);
+            res.status(500).json({"ERROR: ": err});
         }
     }
 }

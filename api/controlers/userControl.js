@@ -12,7 +12,7 @@ exports.userCtrl = {
 
     let validBody = loginValidation(req.body);
     if (validBody.error) {
-      return res.status(400).json("ERROR: invalid details", validBody.error.details);
+      return res.status(400).json({"ERROR: invalid details": validBody.error.details});
     }
 
     try {
@@ -33,11 +33,11 @@ exports.userCtrl = {
 
       let token = createToken(user._id, user.role)
       //delete the header here???
-      res.header('Authorization', `Bearer ${token}`).json("LOG IN SUCCESSFULY", token);
+      res.header('Authorization', `Bearer ${token}`).json({msg:"LOG IN SUCCESSFULY", token});
     }
 
     catch (err) {
-      res.status(500).json("ERROR: ", err)
+      res.status(500).json({"ERROR: ": err})
     }
   },
 
@@ -45,7 +45,7 @@ exports.userCtrl = {
 
     let validBody = userValidation(req.body);
     if (validBody.error) {
-      return res.status(400).json("ERROR: invalid details", validBody.error.details);
+      return res.status(400).json({"ERROR: invalid details":validBody.error.details});
     }
 
     try {
@@ -56,14 +56,14 @@ exports.userCtrl = {
 
       let token = createToken(user._id, user.role);
       //delete the header here???
-      res.header('Authorization', `Bearer ${token}`).json("SIGN UP SUCCESSFULY", token);
+      res.header('Authorization', `Bearer ${token}`).json({msg:"SIGN UP SUCCESSFULY", token});
     }
 
     catch (err) {
       if (err.code == 11000) {
         return res.status(500).json("ERROR: user name already in system, try log in")
       }
-      res.status(500).json({ msg: "err", err })
+      res.status(500).json({"ERROR: ": err})
     }
   },
 
@@ -107,7 +107,7 @@ exports.userCtrl = {
     }
 
     catch (err) {
-      res.status(500).json("ERROR: ", err)
+      res.status(500).json({"ERROR: ": err})
     }
   },
 
@@ -129,7 +129,7 @@ exports.userCtrl = {
     }
 
     catch (err) {
-      res.status(500).json("ERROR: ", err)
+      res.status(500).json({"ERROR: ": err})
     }
   },
 
@@ -151,7 +151,7 @@ exports.userCtrl = {
     }
 
     catch (err) {
-      res.status(500).json("ERROR: ", err)
+      res.status(500).json({"ERROR: ": err})
     }
   },
 
@@ -187,7 +187,7 @@ exports.userCtrl = {
     }
 
     catch (err) {
-      res.status(500).json("ERROR: ", err)
+      res.status(500).json({"ERROR: ": err})
     }
   },
 
@@ -208,7 +208,7 @@ exports.userCtrl = {
           sendEmail(email, 'reset password', passwordResetToken)
         }
         catch (err) {
-          return res.status(400).json("ERROR: Failure while sending reset password url", updatedJob);
+          return res.status(400).json({"ERROR: Failure while sending reset password url": updatedJob});
         }
       }
       else {
@@ -219,7 +219,7 @@ exports.userCtrl = {
     }
 
     catch (err) {
-      res.status(500).json("ERROR: ", err)
+      res.status(500).json({"ERROR: ": err})
     }
 
   }
