@@ -1,3 +1,4 @@
+const { isProfession, isSpecializationOfProfession } = require("../helpers/validateProfessionAndSpecialization");
 const { ProfessionalModel } = require("../models/professionalModel");
 const { UserModel } = require("../models/userModel");
 const { validateProfessional } = require("../validation/professionalValidation");
@@ -11,8 +12,16 @@ exports.professionalCtrl = {
 
         let validBody = validateProfessional(req.body);
         if (validBody.error) {
-            return res.status(400).json(validBody.error.details);
+            return res.status(400).json("ERROR: invalid professional details",validBody.error.details);
         }
+        if (!isProfession(req.body.profession)) {
+            return res.status(400).json("ERROR: invalid profession");
+        }
+        req.body.specializations.forEach(s=>{
+            if(!isSpecializationOfProfession(req.body.profession,s.specialization_name)){
+                return res.status(400).json("ERROR: invalid specialization");
+            }
+        })
 
         try {
             let professional = await new ProfessionalModel(req.body)
@@ -26,32 +35,40 @@ exports.professionalCtrl = {
             res.json(professional)
         }
         catch (err) {
-            res.status(500).json({ "error": err })
+            res.status(500).json("ERROR: ", err)
         }
 
     },
 
     updateProfessional: async (req, res) => {
-
         req.body.user_id = req.tokenData.user_id
+
         let validBody = validateProfessional(req.body);
         if (validBody.error) {
             return res.status(400).json(validBody.error.details);
         }
 
         try {
-            await ProfessionalModel.updateOne({ user_id: req.tokenData.user_id }, req.body);
-            res.status(201).json("changed succesfully");
+            let updatedprofessional = await ProfessionalModel.updateOne(
+                { user_id: req.tokenData.user_id },
+                req.body,
+                { new: true })
+
+            if (!updatedprofessional) {
+                return res.status(400).json("ERROR: invalid professional")
+            }
+
+            res.json(updatedprofessional);
         }
 
         catch (err) {
-            res.status(500).json({ msg: "err", err })
+            res.status(500).json("ERROR: ",err)
         }
     },
 
-    searchProfessional: async (req, res) => {//add price!!!
+    searchProfessional: async (req, res) => {
         try {
-            const { name, profession, specialization, minimalRating, minimalPricePerHour, maximalPricePerHour } = req.query;
+            const { name, profession, specialization, minimalRating, maximalPricePerHour } = req.query;
 
             const query = {};
 
@@ -109,9 +126,8 @@ exports.professionalCtrl = {
 
             res.status(200).json({ professionals });
         }
-        catch (error) {
-            console.error('Error searching professionals:', error.message);
-            res.status(500).json({ error: 'Internal Server Error' });
+        catch (err) {
+            res.status(500).json("ERROR: ",err);
         }
     }
 }

@@ -9,37 +9,35 @@ const { sendEmail } = require("../helpers/sendEmail");
 exports.userCtrl = {
 
   login: async (req, res) => {
+
     let validBody = loginValidation(req.body);
     if (validBody.error) {
-      return res.status(400).json(validBody.error.details);
+      return res.status(400).json("ERROR: invalid details", validBody.error.details);
     }
 
     try {
       let user = await UserModel.findOne({ user_name: req.body.user_name })
+
       if (!user) {
-        return res.status(401).json({ msg: "Password or user name is worng ,code:1" })
+        return res.status(401).json("ERROR: wrong user name or password")
       }
+
       if (user.isBlocked) {
-        return res.status(401).json({ msg: "you are blocked:]" })
+        return res.status(401).json("YOU ARE BLOCKED")
       }
 
       let authPassword = await bcrypt.compare(req.body.password, user.password);
       if (!authPassword) {
-        return res.status(401).json({ msg: "Password or user name is worng ,code:2" });
+        return res.status(401).json("ERROR: wrong user name or password");
       }
 
-      let token = createToken(user._id, user.role);
-      // res.cookie('access_token', token, {
-      //   maxAge: 60 * 60 * 1000,
-      //   httpOnly: false
-      // })
-      // Send the token in the 'Authorization' header with the 'Bearer' scheme
-      res.header('Authorization', `Bearer ${token}`).json({ message: 'Token generated successfully',token:`Bearer ${token}` });
+      let token = createToken(user._id, user.role)
+      //delete the header here???
+      res.header('Authorization', `Bearer ${token}`).json("LOG IN SUCCESSFULY", token);
     }
 
     catch (err) {
-      console.log(err)
-      res.status(500).json({ msg: "err", err })
+      res.status(500).json("ERROR: ", err)
     }
   },
 
@@ -47,7 +45,7 @@ exports.userCtrl = {
 
     let validBody = userValidation(req.body);
     if (validBody.error) {
-      return res.status(400).json(validBody.error.details);
+      return res.status(400).json("ERROR: invalid details", validBody.error.details);
     }
 
     try {
@@ -57,35 +55,31 @@ exports.userCtrl = {
       user.password = "********";
 
       let token = createToken(user._id, user.role);
-      // res.cookie('access_token', token, {
-      //   maxAge: 60 * 60 * 1000,
-      //   httpOnly: false
-      // })
-      //   .json(user);
-      res.header('Authorization', `Bearer ${token}`).json({ message: 'Token generated successfully',token:`Bearer ${token}`,user });
+      //delete the header here???
+      res.header('Authorization', `Bearer ${token}`).json("SIGN UP SUCCESSFULY", token);
     }
 
     catch (err) {
       if (err.code == 11000) {
-        return res.status(500).json({ msg: "User name already in system, try log in", code: 11000 })
+        return res.status(500).json("ERROR: user name already in system, try log in")
       }
-
-      console.log(err);
       res.status(500).json({ msg: "err", err })
     }
   },
 
   logOut: async (req, res) => {
+    //changeee
+    // if (req.cookies.access_token != null) {
+    //   res.clearCookie('access_token');
+    //   return res.json('Cookie cleared');
+    // }
 
-    if (req.cookies.access_token != null) {
-      res.clearCookie('access_token');
-      return res.json('Cookie cleared');
-    }
-
-    res.status(400).json("log out failed no cookies")
+    // res.status(400).json("log out failed no cookies")
   },
 
   update: async (req, res) => {
+    req.body.user_id = req.tokenData.user_id
+
     let validBody = userValidation(req.body);
     if (validBody.error) {
       return res.status(400).json(validBody.error.details);
@@ -93,70 +87,86 @@ exports.userCtrl = {
 
     try {
       let user = await UserModel.findOne({ _id: req.tokenData.user_id })
+
       let samePasswords = await bcrypt.compare(req.body.password, user.password);
       if (!samePasswords && req.body.password != user.password) {
-        return res.status(400).json("can not change password")
+        return res.status(400).json("ERROR: can not change password")
       }
+
       req.body.password = user.password
-      await UserModel.updateOne({ _id: req.tokenData.user_id }, req.body);
-      res.status(201).json("changed succesfully");
+      let updatetdUser = await UserModel.updateOne(
+        { _id: req.body.user_id },
+        req.body,
+        { new: true })
+
+      if (!updatetdUser) {
+        return res.status(400).json("ERROR: invalid user")
+      }
+
+      res.status(200).json(updatetdUser);
     }
 
     catch (err) {
-      res.status(500).json({ msg: "err", err })
+      res.status(500).json("ERROR: ", err)
     }
   },
 
   blockUser: async (req, res) => {
-    const { user_id } = req.body;
+    const user_id = req.body.user_id
 
     try {
       const updatedUser = await UserModel.findOneAndUpdate(
         { _id: user_id },
         { $set: { isBlocked: true } },
         { new: true }
-      );
+      )
+
+      if (!updatedUser) {
+        return res.status(400).json("ERROR: invalid user")
+      }
+
       res.json(updatedUser)
     }
 
     catch (err) {
-      res.status(500).json({ msg: "err", err })
+      res.status(500).json("ERROR: ", err)
     }
   },
 
   changePassword: async (req, res) => {
     let user_id = req.tokenData.user_id
+
     try {
       const updatedUser = await UserModel.findOneAndUpdate(
         { _id: user_id },
         { $set: { password: await bcrypt.hash(req.body.password, 10) } },
         { new: true }
-      );
+      )
+
+      if (!updatedUser) {
+        return res.status(400).json("ERROR: invalid user")
+      }
+
       res.json(updatedUser)
     }
 
     catch (err) {
-      res.status(500).json({ msg: "err", err })
+      res.status(500).json("ERROR: ", err)
     }
   },
 
   resetPassword: async (req, res) => {
     const resetToken = req.params.reset_token
-    // const encryptedResetToken = crypto
-    //   .createHash("sha256")
-    //   .update(resetToken)
-    //   .digest("hex");
-    const newPassword = req.body.new_password;
-    const confirmNewPassword = req.body.confirm_new_password;
+    const newPassword = req.body.new_password
+    const confirmNewPassword = req.body.confirm_new_password
+
     if (newPassword != confirmNewPassword) {
-      res.status(400).json('different passswords')
+      res.status(400).json('ERROR: different passwords')
     }
-    let encryptedPasssword = await bcrypt.hash(newPassword, 10);
-    //let encryptedPasssword =newPassword;
+
+    let encryptedPasssword = await bcrypt.hash(newPassword, 10)
+
     try {
-      console.log(resetToken);
-      //  console.log(encryptedResetToken);
-      //     console.log(resetToken);
       const user = await UserModel.findOneAndUpdate({
         password_reset_token: resetToken,
         password_reset_expires: { $gt: Date.now() }
@@ -169,7 +179,7 @@ exports.userCtrl = {
         { new: true })
 
       if (!user) {
-        res.status(400).json('Token is expired or wrong');
+        res.status(400).json('ERROR: token is expired or wrong');
       }
 
       user.password = "********";
@@ -177,14 +187,14 @@ exports.userCtrl = {
     }
 
     catch (err) {
-      res.status(500).json(err)
+      res.status(500).json("ERROR: ", err)
     }
   },
 
   forgotPassword: async (req, res) => {
     const email = req.body.email
     const { passwordResetToken, passwordResetExpires } = createResetToken()
-    console.log(passwordResetToken);
+
     try {
       const user = await UserModel.findOneAndUpdate({ email },
         {
@@ -192,13 +202,24 @@ exports.userCtrl = {
           password_reset_expires: passwordResetExpires
         },
         { new: true })
+
       if (user) {
-        sendEmail(email, 'reset password', passwordResetToken)//send url
+        try {
+          sendEmail(email, 'reset password', passwordResetToken)
+        }
+        catch (err) {
+          return res.status(400).json("ERROR: Failure while sending reset password url", updatedJob);
+        }
       }
-      res.status(200).json(user)
+      else {
+        return res.status(400).json("ERROR: invalid user")
+      }
+
+      res.status(200).json("reset token sent")
     }
+
     catch (err) {
-      res.status(500).json(err)
+      res.status(500).json("ERROR: ", err)
     }
 
   }
