@@ -82,7 +82,8 @@ exports.professionalCtrl = {
             if (minimalRating) {
                 const filteredProfessionals = await Promise.all(
                     professionals.map(async (p) => {
-                        const rating = await commentCtrl.getRating(p._id, specialization);
+                        const rating = await commentCtrl.getRating(p._id, specialization)||0;
+                        console.log(rating,minimalRating);
                         return rating >= minimalRating ? p : null;
                     })
                 );
