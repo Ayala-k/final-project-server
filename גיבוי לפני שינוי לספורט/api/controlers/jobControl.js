@@ -53,7 +53,7 @@ exports.jobCtrl = {
         try {
             const updatedJob = await JobModel.findOneAndUpdate(
                 { _id: jobId },
-                { $set: { isCanceled: true } },
+                { $set: { is_canceled: true } },
                 { new: true }
             );
             res.json(updatedJob)

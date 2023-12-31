@@ -80,7 +80,7 @@ exports.jobCtrl = {
         try {
             const updatedJob = await JobModel.findOneAndUpdate(
                 { _id: jobId },
-                { $set: { isCanceled: true } },
+                { $set: { is_canceled: true } },
                 { new: true }
             )
 
@@ -133,7 +133,7 @@ exports.jobCtrl = {
             const allJobs = await JobModel.find({
                 time: { $gte: currentDateTime },
                 contracted_professional: null,
-                isCanceled: false
+                is_canceled: false
             })
 
             allJobs.forEach(j => {
@@ -163,7 +163,7 @@ exports.jobCtrl = {
             const jobs = await JobModel.find({
                 time: { $gte: currentDateTime },
                 contracted_professional: professional_id,
-                isCanceled: false
+                is_canceled: false
             })
 
             res.json(jobs)
@@ -240,7 +240,7 @@ exports.jobCtrl = {
                 _id: jobId,
                 contracted_professional: null,
                 time: { $gte: currentDateTime },
-                isCanceled: false
+                is_canceled: false
             },
                 { contracted_professional: professional_id }
             )

@@ -21,7 +21,7 @@ exports.validateJob = (_reqBody) => {
         type: [{ type: mongoose.Schema.Types.ObjectId, ref: "professionals" }]
     },
     contracted_professionals:{ type: mongoose.Schema.Types.ObjectId, ref: "professionals" },
-    isCanceled: {
+    is_canceled: {
         type: Boolean,
         default: false,
       } */

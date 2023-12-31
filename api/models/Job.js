@@ -18,7 +18,7 @@ const jobSchema = new mongoose.Schema({
         ref: "professionals",
         default: null
     },
-    isCanceled: {
+    is_canceled: {
         type: Boolean,
         default: false,
     }

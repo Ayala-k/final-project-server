@@ -10,7 +10,7 @@ const jobSchema = new mongoose.Schema({
     description:String,
     rehearsal_details:String,
     payment: Number,
-    isCanceled: {
+    is_canceled: {
         type: Boolean,
         default: false,
       }

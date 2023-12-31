@@ -13,7 +13,7 @@ const sendDailyEmails=async()=> {
     yesterday.setDate(today.getDate() - 1);
 
     let jobs =await JobModel.find({
-        isCanceled: false,
+        is_canceled: false,
         contracted_professional: { $ne: null }
     }).populate('client_id');
     if (jobs) {

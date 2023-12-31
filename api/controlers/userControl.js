@@ -22,7 +22,7 @@ exports.userCtrl = {
         return res.status(401).json("ERROR: wrong user name or password")
       }
 
-      if (user.isBlocked) {
+      if (user.is_blocked) {
         return res.status(401).json("YOU ARE BLOCKED")
       }
 
@@ -117,7 +117,7 @@ exports.userCtrl = {
     try {
       const updatedUser = await UserModel.findOneAndUpdate(
         { _id: user_id },
-        { $set: { isBlocked: true } },
+        { $set: { is_blocked: true } },
         { new: true }
       )
 

@@ -16,7 +16,7 @@ let userSchema = new mongoose.Schema({
   date_created: {
     type: Date, default: Date.now()
   },
-  isBlocked: {
+  is_blocked: {
     type: Boolean,
     default: false,
   },
