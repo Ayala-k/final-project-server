@@ -33,7 +33,7 @@ exports.userCtrl = {
 
       let token = createToken(user._id, user.role)
       //delete the header here???
-      res.header('Authorization', `Bearer ${token}`).json({msg:"LOG IN SUCCESSFULY", token:`Bearer ${token}`});
+      res.header('Authorization', `Bearer ${token}`).json({msg:"LOG IN SUCCESSFULY", token:`Bearer ${token}`,user});
     }
 
     catch (err) {
@@ -56,7 +56,7 @@ exports.userCtrl = {
 
       let token = createToken(user._id, user.role);
       //delete the header here???
-      res.header('Authorization', `Bearer ${token}`).json({msg:"SIGN UP SUCCESSFULY", token:`Bearer ${token}`});
+      res.header('Authorization', `Bearer ${token}`).json({msg:"SIGN UP SUCCESSFULY", token:`Bearer ${token}`,user});
     }
 
     catch (err) {
