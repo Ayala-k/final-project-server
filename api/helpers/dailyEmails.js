@@ -15,7 +15,8 @@ const sendDailyEmails=async()=> {
     let jobs =await JobModel.find({
         is_canceled: false,
         contracted_professional: { $ne: null }
-    }).populate('client_id');
+    }).populate('client_id')
+    
     if (jobs) {
         jobs.forEach(j => {
             if (findDay(j.time) == findDay(yesterday)) {
@@ -23,7 +24,6 @@ const sendDailyEmails=async()=> {
             }
         });
     }
-
 }
 
 cron.schedule('00 12 * * *', () => {
