@@ -78,12 +78,12 @@ exports.userCtrl = {
   },
 
   update: async (req, res) => {
-    req.body.user_id = req.tokenData.user_id
-
     let validBody = userValidation(req.body);
     if (validBody.error) {
       return res.status(400).json(validBody.error.details);
     }
+
+    req.body.user_id = req.tokenData.user_id
 
     try {
       let user = await UserModel.findOne({ _id: req.tokenData.user_id })
