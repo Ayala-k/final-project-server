@@ -126,6 +126,13 @@ exports.professionalCtrl = {
                 })
             }
 
+            professionals = await Promise.all(
+                professionals.map(async (p) => {
+                  p.rating = (await commentCtrl.getRating(p._id, specialization)) || 0;
+                  return p;
+                })
+              );
+
             res.status(200).json({ professionals });
         }
         catch (err) {

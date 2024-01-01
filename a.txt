@@ -14,6 +14,9 @@
 
 תכנים נורמליים במייל...
 
+חיפוש בעלי מקצוע כללי אפשר כמה התמחויות וקביעת גוב זה רק התמחות אחת? מומלץ להתפשר כאן---
+
+מייל ייחודי בטבלת משתמשים
 
 function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
     const R = 6371; // Radius of the Earth in kilometers
