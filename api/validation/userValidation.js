@@ -7,7 +7,7 @@ exports.userValidation = (_reqBody) => {
       last_name: Joi.string().min(2).max(50).required(),
     },
     email: Joi.string().min(2).max(99).email().required(),
-    password: Joi.string().min(3).max(15).required(),
+    password: Joi.string().min(3).max(200).required(),
     user_name: Joi.string().min(2).max(15).required(),
     phone: Joi.number().integer().min(99999999).max(9999999999).required(),
   })
