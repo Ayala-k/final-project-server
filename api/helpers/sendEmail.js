@@ -19,13 +19,14 @@ function sendEmail(to, subject, text) {
         text: text
     };
 
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log('Email sent: ' + info.response);
-        }
-    });
+    // transporter.sendMail(mailOptions, function (error, info) {
+    //     if (error) {
+    //         console.log(error);
+    //     } else {
+    //         console.log('Email sent: ' + info.response);
+    //     }
+    // });
+    console.log("send demo email bachalomottt!!!");
 }
 
 exports.sendEmail = sendEmail;
