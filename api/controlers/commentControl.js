@@ -30,7 +30,7 @@ exports.commentCtrl = {
         let professional = req.params.professional_id
 
         try {
-            let comments = await CommentModel.find({ professional_id: professional })
+            let comments = await CommentModel.find({ professional_id: professional }).populate('writer_id')
             res.json(comments)
         }
 
