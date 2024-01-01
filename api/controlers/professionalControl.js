@@ -128,7 +128,7 @@ exports.professionalCtrl = {
 
             const updatedProfessionals = await Promise.all(
                 professionals.map(async (professional) => {
-                    rating = (await commentCtrl.getRating(professional._id, specialization)) || 0;
+                    rating = (await commentCtrl.getRating(professional._id, specialization||null)) || 0;
                     return {professional,rating};
                 })
             );
