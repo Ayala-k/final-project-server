@@ -9,6 +9,7 @@ const jobSchema = new mongoose.Schema({
     time: Date,
     duration_in_hours: Number,
     description: String,
+    specialization:String,
     //payment: Number,
     optional_professionals: {
         type: [{ type: mongoose.Schema.Types.ObjectId, ref: "professionals" }]
