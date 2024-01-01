@@ -82,8 +82,8 @@ exports.professionalCtrl = {
             if (minimalRating) {
                 const filteredProfessionals = await Promise.all(
                     professionals.map(async (p) => {
-                        const rating = await commentCtrl.getRating(p._id, specialization)||0;
-                        console.log(rating,minimalRating);
+                        const rating = await commentCtrl.getRating(p._id, specialization) || 0;
+                        console.log(rating, minimalRating);
                         return rating >= minimalRating ? p : null;
                     })
                 );
@@ -125,9 +125,15 @@ exports.professionalCtrl = {
                     }
                 })
             }
-            
 
-            res.status(200).json({ professionals });
+            const updatedProfessionals = await Promise.all(
+                professionals.map(async (professional) => {
+                    rating = (await commentCtrl.getRating(professional._id, specialization)) || 0;
+                    return {professional,rating};
+                })
+            );
+
+            res.status(200).json({ professionals:updatedProfessionals });
         }
         catch (err) {
             res.status(500).json({ "ERROR: ": err });
