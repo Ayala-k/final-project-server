@@ -12,7 +12,7 @@ exports.userCtrl = {
 
     let validBody = loginValidation(req.body);
     if (validBody.error) {
-     return res.status(400).json("ERROR: invalid comment details "+validBody.error.details[0].message);
+      return res.status(400).json("ERROR: invalid comment details " + validBody.error.details[0].message);
     }
 
     try {
@@ -33,7 +33,7 @@ exports.userCtrl = {
 
       let token = createToken(user._id, user.role)
       //delete the header here???
-      res.header('Authorization', `Bearer ${token}`).json({msg:"LOG IN SUCCESSFULY", token:`Bearer ${token}`,user});
+      res.header('Authorization', `Bearer ${token}`).json({ msg: "LOG IN SUCCESSFULY", token: `Bearer ${token}`, user });
     }
 
     catch (err) {
@@ -45,19 +45,19 @@ exports.userCtrl = {
 
     let validBody = userValidation(req.body);
     if (validBody.error) {
-      return res.status(400).json("ERROR: invalid comment details "+validBody.error.details[0].message);
+      return res.status(400).json("ERROR: invalid comment details " + validBody.error.details[0].message);
     }
 
     try {
       let user = new UserModel(req.body);
       user.password = await bcrypt.hash(user.password, 10);
-      user.phone=user.phone.toString()
+      user.phone = user.phone.toString()
       await user.save();
       user.password = "********";
 
       let token = createToken(user._id, user.role);
       //delete the header here???
-      res.header('Authorization', `Bearer ${token}`).json({msg:"SIGN UP SUCCESSFULY", token:`Bearer ${token}`,user});
+      res.header('Authorization', `Bearer ${token}`).json({ msg: "SIGN UP SUCCESSFULY", token: `Bearer ${token}`, user });
     }
 
     catch (err) {
@@ -81,7 +81,7 @@ exports.userCtrl = {
   update: async (req, res) => {
     let validBody = userValidation(req.body);
     if (validBody.error) {
-      return res.status(400).json("ERROR: invalid comment details "+validBody.error.details[0].message);
+      return res.status(400).json("ERROR: invalid comment details " + validBody.error.details[0].message);
     }
 
     req.body.user_id = req.tokenData.user_id
@@ -90,7 +90,7 @@ exports.userCtrl = {
       let user = await UserModel.findOne({ _id: req.tokenData.user_id })
 
       let samePasswords = await bcrypt.compare(req.body.password, user.password);
-      if (!samePasswords && req.body.password != user.password) {
+      if (!samePasswords && req.body.password != user.password && req.body.password != "********") {
         return res.status(400).json("ERROR: can not change password")
       }
 
@@ -206,7 +206,7 @@ exports.userCtrl = {
 
       if (user) {
         try {
-          sendEmail(email, 'reset password', `http://localhost:5173/reset_password/`+passwordResetToken)
+          sendEmail(email, 'reset password', `http://localhost:5173/reset_password/` + passwordResetToken)
         }
         catch (err) {
           return res.status(400).json("ERROR: Failure while sending reset password url");
