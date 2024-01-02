@@ -94,6 +94,7 @@ exports.userCtrl = {
         return res.status(400).json("ERROR: can not change password")
       }
 
+      req.body.phone =  user.phone.toString()
       req.body.password = user.password
       let updatetdUser = await UserModel.updateOne(
         { _id: req.body.user_id },
