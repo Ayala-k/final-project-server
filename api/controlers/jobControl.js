@@ -246,7 +246,7 @@ exports.jobCtrl = {
             )
 
             if (!updatedJob) {
-                return res.status(400).send("ERROR: invalid job")
+                return res.status(400).json("ERROR: invalid job")
             }
 
             if (updatedJob) {
