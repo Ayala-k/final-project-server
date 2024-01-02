@@ -37,7 +37,7 @@ exports.userCtrl = {
     }
 
     catch (err) {
-      res.status(500).json({"ERROR: ": err})
+      res.status(500).json("ERROR")
     }
   },
 
@@ -45,12 +45,13 @@ exports.userCtrl = {
 
     let validBody = userValidation(req.body);
     if (validBody.error) {
-      return res.status(400).json({"ERROR: invalid details":validBody.error.details});
+      return res.status(400).json("ERROR: invalid comment details "+validBody.error.details[0].message);
     }
 
     try {
       let user = new UserModel(req.body);
       user.password = await bcrypt.hash(user.password, 10);
+      user.phone=JSON.stringify(user.phone)
       await user.save();
       user.password = "********";
 
@@ -63,7 +64,7 @@ exports.userCtrl = {
       if (err.code == 11000) {
         return res.status(500).json("ERROR: user name already in system, try log in")
       }
-      res.status(500).json({"ERROR: ": err})
+      res.status(500).json("ERROR")
     }
   },
 
@@ -80,7 +81,7 @@ exports.userCtrl = {
   update: async (req, res) => {
     let validBody = userValidation(req.body);
     if (validBody.error) {
-      return res.status(400).json(validBody.error.details);
+      return res.status(400).json("ERROR: invalid comment details "+validBody.error.details[0].message);
     }
 
     req.body.user_id = req.tokenData.user_id
@@ -107,7 +108,7 @@ exports.userCtrl = {
     }
 
     catch (err) {
-      res.status(500).json({"ERROR: ": err})
+      res.status(500).json("ERROR")
     }
   },
 
@@ -129,7 +130,7 @@ exports.userCtrl = {
     }
 
     catch (err) {
-      res.status(500).json({"ERROR: ": err})
+      res.status(500).json("ERROR")
     }
   },
 
@@ -151,7 +152,7 @@ exports.userCtrl = {
     }
 
     catch (err) {
-      res.status(500).json({"ERROR: ": err})
+      res.status(500).json("ERROR")
     }
   },
 
@@ -187,7 +188,7 @@ exports.userCtrl = {
     }
 
     catch (err) {
-      res.status(500).json({"ERROR: ": err})
+      res.status(500).json("ERROR")
     }
   },
 
@@ -208,7 +209,7 @@ exports.userCtrl = {
           sendEmail(email, 'reset password', passwordResetToken)
         }
         catch (err) {
-          return res.status(400).json({"ERROR: Failure while sending reset password url": updatedJob});
+          return res.status(400).json("ERROR: Failure while sending reset password url");
         }
       }
       else {
@@ -219,7 +220,7 @@ exports.userCtrl = {
     }
 
     catch (err) {
-      res.status(500).json({"ERROR: ": err})
+      res.status(500).json("ERROR")
     }
 
   }

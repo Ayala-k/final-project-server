@@ -11,7 +11,7 @@ exports.commentCtrl = {
 
         let validBody = validateComment(req.body)
         if (validBody.error) {
-            return res.status(400).json("ERROR: invalid comment details"+validBody.error.details);
+            return res.status(400).json("ERROR: invalid comment details "+validBody.error.details[0].message);
         }
 
         try {
@@ -22,7 +22,7 @@ exports.commentCtrl = {
 
         catch (err) {
             console.log(err);
-            res.status(500).json({"ERROR: ": err})
+            res.status(500).json("ERROR")
         }
     },
 
@@ -36,7 +36,7 @@ exports.commentCtrl = {
 
         catch (err) {
             console.log(err);
-            res.status(500).json({"ERROR: ": err})
+            res.status(500).json("ERROR")
         }
     },
 
@@ -49,7 +49,7 @@ exports.commentCtrl = {
 
         catch (err) {
             console.log(err);
-            res.status(500).json({"ERROR: ": err})
+            res.status(500).json("ERROR")
         }
     },
 
@@ -68,7 +68,7 @@ exports.commentCtrl = {
 
         catch (err) {
             console.log(err);
-            res.status(500).json({"ERROR: ": err})
+            res.status(500).json("ERROR")
         }
     },
 
