@@ -13,16 +13,21 @@ exports.professionalCtrl = {
 
         let validBody = validateProfessional(req.body);
         if (validBody.error) {
-            return res.status(400).json( "ERROR: invalid comment details "+validBody.error.details[0].message);
+            return res.status(400).json("ERROR: invalid comment details " + validBody.error.details[0].message);
         }
         if (!isProfession(req.body.profession)) {
             return res.status(400).json("ERROR: invalid profession");
         }
+        let flag = false
         req.body.specializations.forEach(s => {
+            console.log(req.body.profession, s.specialization_name);
             if (!isSpecializationOfProfession(req.body.profession, s.specialization_name)) {
-                return res.status(400).json("ERROR: invalid specialization");
+                flag = true
             }
         })
+        if (flag == true) {
+            return res.status(400).json("ERROR: invalid specialization");
+        }
 
         try {
             let professional = await new ProfessionalModel(req.body)
@@ -46,7 +51,7 @@ exports.professionalCtrl = {
 
         let validBody = validateProfessional(req.body);
         if (validBody.error) {
-            return res.status(400).json( "ERROR: invalid comment details "+validBody.error.details[0].message);
+            return res.status(400).json("ERROR: invalid comment details " + validBody.error.details[0].message);
         }
 
         try {
@@ -128,12 +133,12 @@ exports.professionalCtrl = {
 
             const updatedProfessionals = await Promise.all(
                 professionals.map(async (professional) => {
-                    rating = (await commentCtrl.getRating(professional._id, specialization||null)) || 0;
-                    return {professional,rating};
+                    rating = (await commentCtrl.getRating(professional._id, specialization || null)) || 0;
+                    return { professional, rating };
                 })
             );
 
-            res.status(200).json({ professionals:updatedProfessionals });
+            res.status(200).json({ professionals: updatedProfessionals });
         }
         catch (err) {
             res.status(500).json("ERROR");

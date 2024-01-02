@@ -51,7 +51,7 @@ exports.userCtrl = {
     try {
       let user = new UserModel(req.body);
       user.password = await bcrypt.hash(user.password, 10);
-      user.phone=JSON.stringify(user.phone)
+      user.phone=user.phone.toString()
       await user.save();
       user.password = "********";
 
