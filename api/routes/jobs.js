@@ -12,7 +12,7 @@ router.patch('/cancel_job/:job_id',authUser,jobCtrl.cancelJob)
 
 router.get('/get_client_jobs',authUser,jobCtrl.getClientJobs)
 
-router.get('/get_client_open_ jobs',authUser,jobCtrl.getClientOpenJobs)
+router.get('/get_client_open_jobs',authUser,jobCtrl.getClientOpenJobs)
 
 router.get('/get_client_contracted_jobs',authUser,jobCtrl.getClientContractedJobs)
 
