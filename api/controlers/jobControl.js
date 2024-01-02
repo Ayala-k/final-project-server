@@ -112,7 +112,7 @@ exports.jobCtrl = {
         let client_id = req.tokenData.user_id
 
         try {
-            const jobs = await JobModel.find({ client_id }).populate('client_id').populate('contracted_professional')
+            const jobs = await JobModel.find({ client_id,is_canceled:false }).populate('client_id').populate('contracted_professional')
             res.json(jobs)
         }
         catch (err) {
@@ -126,7 +126,7 @@ exports.jobCtrl = {
 
         try {
             const jobs = await JobModel.find(
-                { client_id, contracted_professional: null }).populate('client_id')
+                { client_id,is_canceled:false, contracted_professional: null }).populate('client_id')
             res.json(jobs)
         }
         catch (err) {
@@ -139,7 +139,7 @@ exports.jobCtrl = {
 
         try {
             const jobs = await JobModel.find(
-                { client_id, contracted_professional: { $ne: null } }
+                { client_id,is_canceled:false, contracted_professional: { $ne: null } }
             ).populate('client_id');
 
             res.json(jobs)
