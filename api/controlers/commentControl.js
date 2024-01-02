@@ -11,7 +11,7 @@ exports.commentCtrl = {
 
         let validBody = validateComment(req.body)
         if (validBody.error) {
-            return res.status(400).json({"ERROR: invalid comment details":validBody.error.details});
+            return res.status(400).json("ERROR: invalid comment details"+validBody.error.details);
         }
 
         try {
