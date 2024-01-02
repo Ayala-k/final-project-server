@@ -62,7 +62,7 @@ exports.userCtrl = {
 
     catch (err) {
       if (err.code == 11000) {
-        return res.status(500).json("ERROR: user name already in system, try log in")
+        return res.status(500).json("ERROR: user name or email already in system, try log in")
       }
       res.status(500).json("ERROR")
     }
