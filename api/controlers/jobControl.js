@@ -11,7 +11,7 @@ exports.jobCtrl = {
 
         let validBody = validateJob(req.body);
         if (validBody.error || req.body.optional_professionals.length < 1) {
-            return res.status(400).json("ERROR: invalid comment details "+validBody.error.details[0].message);
+            return res.status(400).json("ERROR: invalid comment details " + validBody.error.details[0].message);
         }
 
         let job
@@ -41,7 +41,7 @@ exports.jobCtrl = {
 
         let validBody = validateJob(req.body)
         if (validBody.error || req.body.optional_professionals.length < 1) {
-            return res.status(400).json("ERROR: invalid comment details "+validBody.error.details[0].message);
+            return res.status(400).json("ERROR: invalid comment details " + validBody.error.details[0].message);
         }
 
         let jobId = req.params.job_id
@@ -70,7 +70,7 @@ exports.jobCtrl = {
             res.json(job)
         }
         catch (err) {
-            return res.status(500).json({"ERROR: ": err});
+            return res.status(500).json({ "ERROR: ": err });
         }
     },
 
@@ -102,15 +102,46 @@ exports.jobCtrl = {
         }
 
         catch (err) {
-            return res.status(500).json({"ERROR: ": err});
+            return res.status(500).json({ "ERROR: ": err });
         }
     },
 
+
+    //cancel
     getClientJobs: async (req, res) => {
         let client_id = req.tokenData.user_id
 
         try {
             const jobs = await JobModel.find({ client_id }).populate('client_id').populate('contracted_professional')
+            res.json(jobs)
+        }
+        catch (err) {
+            res.status(500).json("ERROR")
+        }
+    },
+
+
+    getClientOpenJobs: async (req, res) => {
+        let client_id = req.tokenData.user_id
+
+        try {
+            const jobs = await JobModel.find(
+                { client_id, contracted_professional: null }).populate('client_id')
+            res.json(jobs)
+        }
+        catch (err) {
+            res.status(500).json("ERROR")
+        }
+    },
+
+    getClientContractedJobs: async (req, res) => {
+        let client_id = req.tokenData.user_id
+
+        try {
+            const jobs = await JobModel.find(
+                { client_id, contracted_professional: { $ne: null } }
+            ).populate('client_id');
+
             res.json(jobs)
         }
         catch (err) {
@@ -219,7 +250,7 @@ exports.jobCtrl = {
             }
         }
         else {
-            return res.status(500).json({"ERROR: ": err})
+            return res.status(500).json({ "ERROR: ": err })
         }
     },
 
@@ -250,11 +281,11 @@ exports.jobCtrl = {
             }
 
             if (updatedJob) {
-                try{
-                let email = (await JobModel.findOne({ _id: jobId }).populate('client_id')).client_id.email
-                sendEmail(email, 'a professional joined your job ):', JSON.stringify(updatedJob))
+                try {
+                    let email = (await JobModel.findOne({ _id: jobId }).populate('client_id')).client_id.email
+                    sendEmail(email, 'a professional joined your job ):', JSON.stringify(updatedJob))
                 }
-                catch(err){
+                catch (err) {
                     return res.status(201).json("ERROR: Failure while notifying client");
                 }
             }
