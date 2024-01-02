@@ -206,7 +206,7 @@ exports.userCtrl = {
 
       if (user) {
         try {
-          sendEmail(email, 'reset password', passwordResetToken)
+          sendEmail(email, 'reset password', `http://localhost:5173/reset_password/`+passwordResetToken)
         }
         catch (err) {
           return res.status(400).json("ERROR: Failure while sending reset password url");
