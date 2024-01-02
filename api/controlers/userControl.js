@@ -163,7 +163,7 @@ exports.userCtrl = {
     const confirmNewPassword = req.body.confirm_new_password
 
     if (newPassword != confirmNewPassword) {
-      res.status(400).json('ERROR: different passwords')
+      return res.status(400).json('ERROR: different passwords')
     }
 
     let encryptedPasssword = await bcrypt.hash(newPassword, 10)
@@ -181,15 +181,15 @@ exports.userCtrl = {
         { new: true })
 
       if (!user) {
-        res.status(400).json('ERROR: token is expired or wrong');
+        return res.status(400).json('ERROR: token is expired or wrong');
       }
 
       user.password = "********";
-      res.json(user)
+      return res.json(user)
     }
 
     catch (err) {
-      res.status(500).json("ERROR")
+      return res.status(500).json("ERROR")
     }
   },
 
