@@ -6,7 +6,7 @@ exports.authUser = (req,res,next) => {
 
   const token = authHeader.slice(7);
   if(!token){
-    return res.status(401).json({msg:"You need to send token to this endpoint url"})
+    return res.status(401).json("You need to send token to this endpoint url")
   }
 
   try{
@@ -17,7 +17,7 @@ exports.authUser = (req,res,next) => {
 
   catch(err){
     console.log(err);
-    return res.status(401).json({msg:"Token invalid or expired, log in again"})
+    return res.status(401).json("Token invalid or expired, log in again")
   }
 }
 
@@ -27,13 +27,13 @@ exports.authAdmin = (req,res,next) => {
 
   const token = authHeader.slice(7);
   if(!token){
-    return res.status(401).json({msg:"You need to send token to this endpoint url"})
+    return res.status(401).json("You need to send token to this endpoint url")
   }
 
   try{
     let decodeToken = jwt.verify(token,config.tokenSecret);
     if(decodeToken.role != "admin"){
-      return res.status(401).json({msg:"Admin token required"})
+      return res.status(401).json("Admin token required")
     }
 
     req.tokenData = decodeToken;
@@ -42,6 +42,6 @@ exports.authAdmin = (req,res,next) => {
   
   catch(err){
     console.log(err);
-    return res.status(401).json({msg:"Token invalid or expired, log in again "})
+    return res.status(401).json("Token invalid or expired, log in again ")
   }
 }
