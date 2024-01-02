@@ -110,7 +110,7 @@ exports.jobCtrl = {
         let client_id = req.tokenData.user_id
 
         try {
-            const jobs = await JobModel.find({ client_id }).populate('client_id')
+            const jobs = await JobModel.find({ client_id }).populate('client_id').populate('contracted_professional')
             res.json(jobs)
         }
         catch (err) {
