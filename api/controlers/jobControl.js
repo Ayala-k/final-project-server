@@ -76,10 +76,11 @@ exports.jobCtrl = {
 
     cancelJob: async (req, res) => {
         let jobId = req.params.job_id
+        let user_id = req.tokenData.user_id;
 
         try {
             const updatedJob = await JobModel.findOneAndUpdate(
-                { _id: jobId },
+                { _id: jobId,client_id:user_id },
                 { $set: { is_canceled: true } },
                 { new: true }
             )
