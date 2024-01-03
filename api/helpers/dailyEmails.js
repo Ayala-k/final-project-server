@@ -16,17 +16,18 @@ const sendDailyEmails=async()=> {
         is_canceled: false,
         contracted_professional: { $ne: null }
     }).populate('client_id')
-    
+
     if (jobs) {
         jobs.forEach(j => {
             if (findDay(j.time) == findDay(yesterday)) {
-                sendEmail(j.client_id.email, 'please commant ', 'לשלוח לינק');
+                let url='http://localhost:5173/write_comment/'+j.contracted_professional+'/'+j.specialization
+                sendEmail(j.client_id.email, 'please commant ', url);
             }
-        });
+        })
     }
 }
 
 cron.schedule('00 12 * * *', () => {
     sendDailyEmails();
-    console.log('This runs every day at midnight!');
+    console.log('This runs every day at mid-day!');
 });

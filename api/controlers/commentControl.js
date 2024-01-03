@@ -11,7 +11,7 @@ exports.commentCtrl = {
 
         let validBody = validateComment(req.body)
         if (validBody.error) {
-            return res.status(400).json("ERROR: invalid comment details "+validBody.error.details[0].message);
+            return res.status(400).json("ERROR: invalid comment details " + validBody.error.details[0].message);
         }
 
         try {
@@ -57,8 +57,8 @@ exports.commentCtrl = {
         let professional = req.params.professional_id
         let specialization = req.params.specialization
 
-        let profession=(await ProfessionalModel.findOne({_id:professional})).profession
-        if(!isProfession(profession)||!isSpecializationOfProfession(profession,specialization)){
+        let profession = (await ProfessionalModel.findOne({ _id: professional })).profession
+        if (!isProfession(profession) || !isSpecializationOfProfession(profession, specialization)) {
             return res.status(400).json("ERROR: invalid specialization")
         }
 
