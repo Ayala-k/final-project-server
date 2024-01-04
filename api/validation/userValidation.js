@@ -10,7 +10,9 @@ exports.userValidation = (_reqBody) => {
     password: Joi.string().min(3).max(200).required(),
     user_name: Joi.string().min(2).max(15).required(),
     phone: Joi.string().min(9).max(10).required(),
+    image_url:Joi.string()
   })
+
 
   return joiSchema.validate(_reqBody);
 }
