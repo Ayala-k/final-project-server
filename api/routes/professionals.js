@@ -13,4 +13,6 @@ router.get('/search_professional',authUser,professionalCtrl.searchProfessional)
 
 router.get('/get_specializations_by_profession/:profession',professionalCtrl.getSpecializationsByprofession)
 
+router.get('/get_email/:professional_id',professionalCtrl.getProfessionalEmail)
+
 module.exports = router;
