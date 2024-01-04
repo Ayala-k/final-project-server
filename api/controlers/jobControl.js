@@ -313,11 +313,11 @@ exports.jobCtrl = {
                 .populate({
                     path: 'contracted_professional',
                     populate: {
-                        path: 'user_id',
+                        path: 'contracted_professional.user_id',
                         model: 'UserModel', // Replace with the actual model name for user
                     },
                 }).populate('client_id')
-                
+
             if (!job) {
                 return res.status(400).json("ERROR: invalid job")
             }
