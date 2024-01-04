@@ -305,9 +305,19 @@ exports.jobCtrl = {
     getJob: async (req, res) => {
         let jobId = req.params.job_id
         try {
-            let job = await JobModel.findOne({ _id: jobId })
-                .populate('contracted_professional').populate('contracted_professional.user_id')
-                .populate('client_id')
+            // let job = await JobModel.findOne({ _id: jobId })
+            //     .populate('contracted_professional')
+            //     .populate('contracted_professional.user_id')
+            //     .populate('client_id')
+            const job = await JobModel.findOne({ _id: jobId })
+                .populate({
+                    path: 'contracted_professional',
+                    populate: {
+                        path: 'user_id',
+                        model: 'UserModel', // Replace with the actual model name for user
+                    },
+                }).populate('client_id')
+                
             if (!job) {
                 return res.status(400).json("ERROR: invalid job")
             }
