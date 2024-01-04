@@ -306,7 +306,7 @@ exports.jobCtrl = {
         let jobId = req.params.job_id
         try {
             let job = await JobModel.findOne({ _id: jobId })
-                .populate('contracted_professional')
+                .populate('contracted_professional').populate('contracted_professional.user_id')
                 .populate('client_id')
             if (!job) {
                 return res.status(400).json("ERROR: invalid job")
