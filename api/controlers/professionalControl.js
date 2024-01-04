@@ -80,7 +80,6 @@ exports.professionalCtrl = {
             const query = {};
 
             if (profession) {
-                console.log('profession',profession);
                 query.profession = { $in: profession.split(',') }
             }
 
@@ -97,7 +96,6 @@ exports.professionalCtrl = {
             }
 
             if (specialization) {
-                console.log('specialization',specialization);
                 let splittedArray = specialization.split(',')
                 professionals = professionals.filter(p => {
                     let flag = false
@@ -113,20 +111,14 @@ exports.professionalCtrl = {
             }
 
             if (name) {
-                console.log('name',name);
-
                 professionals = professionals.filter(p => {
-                    console.log(p.user_id.full_name.first_name, name);
                     if (p.user_id.full_name.first_name.includes(name)) {
-                        console.log("added");
                         return true
                     }
                     else if (p.user_id.full_name.last_name.includes(name)) {
-                        console.log("added");
                         return true
                     }
                     else if (p.user_id.user_name.includes(name)) {
-                        console.log("added");
                         return true
                     }
                     else {
