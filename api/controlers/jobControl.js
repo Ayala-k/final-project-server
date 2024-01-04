@@ -302,6 +302,20 @@ exports.jobCtrl = {
         }
     },
 
+    getJob:async(req,res)=>{
+        let jobId=req.params.job_id
+        try{
+            let job=await JobModel.findOne({_id:jobId})
+            if(!job){
+                return res.status(400).json("ERROR: invalid job")
+            }
+            res.json(job)
+        }
+        catch(err){
+            res.status(500).json("ERROR")
+        }
+    },
+
     calculatePrice: async (job) => {
         let price = 0
         try {

@@ -24,5 +24,7 @@ router.patch('/remove_professional_from_job/:job_id',authUser,jobCtrl.removeProf
 
 router.put('/add_contracted_professional/:job_id',authUser,jobCtrl.addContractedProffessional)
 
+router.get('/get_job/:job_id',authUser,jobCtrl.getJob)
+
 
 module.exports = router;
