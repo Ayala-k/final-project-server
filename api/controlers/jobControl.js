@@ -275,7 +275,8 @@ exports.jobCtrl = {
                 time: { $gte: currentDateTime },
                 is_canceled: false
             },
-                { contracted_professional: professional_id }
+                { contracted_professional: professional_id },
+                {new:true}
             )
 
             if (!updatedJob) {
@@ -283,12 +284,11 @@ exports.jobCtrl = {
             }
 
             if (updatedJob) {
-                let price = await calculatePrice(updatedJob)
-                let professional_email= (await UserModel.findOne({_id:user_id})).email
+                let price = await this.jobCtrl.calculatePrice(updatedJob)
+                let professional_email = (await UserModel.findOne({ _id: user_id })).email
                 try {
                     let email = (await JobModel.findOne({ _id: jobId }).populate('client_id')).client_id.email
                     sendEmail(email, 'a professional joined your job ):', JSON.stringify(updatedJob) + `   http://localhost:5173/paypal/${professional_email}/${price}`)
-                    console.log(`http://localhost:5173/paypal/${professional_email}/${price}`);
                 }
                 catch (err) {
                     return res.status(201).json("ERROR: Failure while notifying client");
@@ -306,8 +306,8 @@ exports.jobCtrl = {
         let price = 0
         try {
             let professional = await ProfessionalModel.findOne({ _id: job.contracted_professional })
-            professional.specializaions.forEach(s => {
-                if (s.specializaion_name == job.specializaion) {
+            professional.specializations.forEach(s => {
+                if (s.specialization_name == job.specialization) {
                     price = s.price_per_hour * job.duration_in_hours
                 }
             })
