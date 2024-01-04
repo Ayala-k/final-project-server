@@ -284,11 +284,11 @@ exports.jobCtrl = {
             }
 
             if (updatedJob) {
-                let price = await this.jobCtrl.calculatePrice(updatedJob)
-                let professional_email = (await UserModel.findOne({ _id: user_id })).email
+                // let price = await this.jobCtrl.calculatePrice(updatedJob)
+                // let professional_email = (await UserModel.findOne({ _id: user_id })).email
                 try {
                     let email = (await JobModel.findOne({ _id: jobId }).populate('client_id')).client_id.email
-                    sendEmail(email, 'a professional joined your job ):', JSON.stringify(updatedJob) + `   http://localhost:5173/paypal/${professional_email}/${price}`)
+                    sendEmail(email, 'a professional joined your job ):', JSON.stringify(updatedJob) + `   http://localhost:5173/paypal/${jobId}`)
                 }
                 catch (err) {
                     return res.status(201).json("ERROR: Failure while notifying client");
