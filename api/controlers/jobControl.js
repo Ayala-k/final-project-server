@@ -276,7 +276,7 @@ exports.jobCtrl = {
                 is_canceled: false
             },
                 { contracted_professional: professional_id },
-                {new:true}
+                { new: true }
             )
 
             if (!updatedJob) {
@@ -302,16 +302,18 @@ exports.jobCtrl = {
         }
     },
 
-    getJob:async(req,res)=>{
-        let jobId=req.params.job_id
-        try{
-            let job=await JobModel.findOne({_id:jobId})
-            if(!job){
+    getJob: async (req, res) => {
+        let jobId = req.params.job_id
+        try {
+            let job = await JobModel.findOne({ _id: jobId })
+                .populate('contracted_professional')
+                .populate('client_id')
+            if (!job) {
                 return res.status(400).json("ERROR: invalid job")
             }
             res.json(job)
         }
-        catch(err){
+        catch (err) {
             res.status(500).json("ERROR")
         }
     },
