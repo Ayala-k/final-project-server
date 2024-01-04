@@ -3,7 +3,8 @@ const { ProfessionalModel } = require("../models/professionalModel");
 const { UserModel } = require("../models/userModel");
 const { validateProfessional } = require("../validation/professionalValidation");
 const { commentCtrl } = require("./commentControl");
-const profession_list = require('../data/professions.json')
+const profession_list = require('../data/professions.json');
+const { min } = require("lodash");
 
 
 exports.professionalCtrl = {
@@ -79,6 +80,7 @@ exports.professionalCtrl = {
             const query = {};
 
             if (profession) {
+                console.log('profession',profession);
                 query.profession = { $in: profession.split(',') }
             }
 
@@ -87,8 +89,7 @@ exports.professionalCtrl = {
             if (minimalRating) {
                 const filteredProfessionals = await Promise.all(
                     professionals.map(async (p) => {
-                        const rating = await commentCtrl.getRating(p._id, specialization) || 0;
-                        console.log(rating, minimalRating);
+                        const rating = await commentCtrl.getRating(p._id, specialization||null) || 0;
                         return rating >= minimalRating ? p : null;
                     })
                 );
@@ -96,6 +97,7 @@ exports.professionalCtrl = {
             }
 
             if (specialization) {
+                console.log('specialization',specialization);
                 let splittedArray = specialization.split(',')
                 professionals = professionals.filter(p => {
                     let flag = false
@@ -111,6 +113,8 @@ exports.professionalCtrl = {
             }
 
             if (name) {
+                console.log('name',name);
+
                 professionals = professionals.filter(p => {
                     console.log(p.user_id.full_name.first_name, name);
                     if (p.user_id.full_name.first_name.includes(name)) {
