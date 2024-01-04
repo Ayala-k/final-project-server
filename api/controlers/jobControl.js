@@ -1,7 +1,8 @@
 const { JobModel } = require("../models/Job");
 const { ProfessionalModel } = require("../models/professionalModel");
 const { validateJob } = require("../validation/jobValidation")
-const { sendEmail } = require('../helpers/sendEmail')
+const { sendEmail } = require('../helpers/sendEmail');
+const { UserModel } = require("../models/userModel");
 
 
 exports.jobCtrl = {
@@ -283,10 +284,11 @@ exports.jobCtrl = {
 
             if (updatedJob) {
                 let price = await calculatePrice(updatedJob)
+                let professional_email= (await UserModel.findOne({_id:user_id})).email
                 try {
                     let email = (await JobModel.findOne({ _id: jobId }).populate('client_id')).client_id.email
-                    sendEmail(email, 'a professional joined your job ):', JSON.stringify(updatedJob) + `   http://localhost:5173/paypal/${updatedJob.contracted_professional}/${price}`)
-                    console.log(`http://localhost:5173/paypal/${updatedJob.contracted_professional}/${price}`);
+                    sendEmail(email, 'a professional joined your job ):', JSON.stringify(updatedJob) + `   http://localhost:5173/paypal/${professional_email}/${price}`)
+                    console.log(`http://localhost:5173/paypal/${professional_email}/${price}`);
                 }
                 catch (err) {
                     return res.status(201).json("ERROR: Failure while notifying client");
