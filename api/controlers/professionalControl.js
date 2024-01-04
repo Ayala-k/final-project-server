@@ -162,7 +162,8 @@ exports.professionalCtrl = {
     getProfessionalEmail: async (req, res) => {
         let professional_id = req.params.professional_id
         try {
-            let email = (await ProfessionalModel.findOne({ _id: professional_id }).populate('user_id')).email
+            let professional=await ProfessionalModel.findOne({ _id: professional_id }).populate('user_id')
+            let email = professional.user_id.email
             res.json(email)
         }
         catch (err) {
