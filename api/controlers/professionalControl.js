@@ -88,7 +88,7 @@ exports.professionalCtrl = {
             if (minimalRating) {
                 const filteredProfessionals = await Promise.all(
                     professionals.map(async (p) => {
-                        const rating = await commentCtrl.getRating(p._id, specialization||null) || 0;
+                        const rating = await commentCtrl.getRating(p._id, specialization || null) || 0;
                         return rating >= minimalRating ? p : null;
                     })
                 );
@@ -156,6 +156,17 @@ exports.professionalCtrl = {
         }
         catch (error) {
             res.status(500).json("ERROR");
+        }
+    },
+
+    getProfessionalEmail: async (req, res) => {
+        let professional_id = req.params.professional_id
+        try {
+            let email = (await ProfessionalModel.findOne({ _id: professional_id }).populate('user_id')).email
+            res.json(email)
+        }
+        catch (err) {
+            res.status(500).json("ERROR")
         }
     }
 }

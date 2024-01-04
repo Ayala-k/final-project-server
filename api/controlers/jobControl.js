@@ -310,14 +310,8 @@ exports.jobCtrl = {
             //     .populate('contracted_professional.user_id')
             //     .populate('client_id')
             const job = await JobModel.findOne({ _id: jobId })
-                .populate({
-                    path: 'contracted_professional',
-                    populate: {
-                        path: 'contracted_professional.user_id',
-                        model: 'UserModel', // Replace with the actual model name for user
-                    },
-                }).populate('client_id')
-
+                .populate('client_id').populate('contracted_professional')
+            console.log(job);
             if (!job) {
                 return res.status(400).json("ERROR: invalid job")
             }
