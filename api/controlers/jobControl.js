@@ -80,7 +80,7 @@ exports.jobCtrl = {
 
         try {
             const updatedJob = await JobModel.findOneAndUpdate(
-                { _id: jobId,client_id:user_id },
+                { _id: jobId, client_id: user_id },
                 { $set: { is_canceled: true } },
                 { new: true }
             )
@@ -113,7 +113,7 @@ exports.jobCtrl = {
         let client_id = req.tokenData.user_id
 
         try {
-            const jobs = await JobModel.find({ client_id,is_canceled:false }).populate('client_id').populate('contracted_professional')
+            const jobs = await JobModel.find({ client_id, is_canceled: false }).populate('client_id').populate('contracted_professional')
             res.json(jobs)
         }
         catch (err) {
@@ -127,7 +127,7 @@ exports.jobCtrl = {
 
         try {
             const jobs = await JobModel.find(
-                { client_id,is_canceled:false, contracted_professional: null }).populate('client_id')
+                { client_id, is_canceled: false, contracted_professional: null }).populate('client_id')
             res.json(jobs)
         }
         catch (err) {
@@ -140,7 +140,7 @@ exports.jobCtrl = {
 
         try {
             const jobs = await JobModel.find(
-                { client_id,is_canceled:false, contracted_professional: { $ne: null } }
+                { client_id, is_canceled: false, contracted_professional: { $ne: null } }
             ).populate('client_id').populate('contracted_professional');
 
             res.json(jobs)
@@ -282,9 +282,11 @@ exports.jobCtrl = {
             }
 
             if (updatedJob) {
+                let price = await calculatePrice(updatedJob)
                 try {
                     let email = (await JobModel.findOne({ _id: jobId }).populate('client_id')).client_id.email
-                    sendEmail(email, 'a professional joined your job ):', JSON.stringify(updatedJob))
+                    sendEmail(email, 'a professional joined your job ):', JSON.stringify(updatedJob) + `   http://localhost:5173/paypal/${updatedJob.contracted_professional}/${price}`)
+                    console.log(`http://localhost:5173/paypal/${updatedJob.contracted_professional}/${price}`);
                 }
                 catch (err) {
                     return res.status(201).json("ERROR: Failure while notifying client");
@@ -296,5 +298,22 @@ exports.jobCtrl = {
         catch (err) {
             res.status(500).json("ERROR")
         }
+    },
+
+    calculatePrice: async (job) => {
+        let price = 0
+        try {
+            let professional = await ProfessionalModel.findOne({ _id: job.contracted_professional })
+            professional.specializaions.forEach(s => {
+                if (s.specializaion_name == job.specializaion) {
+                    price = s.price_per_hour * job.duration_in_hours
+                }
+            })
+            return price
+        }
+        catch (err) {
+            return 0
+        }
+
     }
 }  
