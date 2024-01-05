@@ -8,8 +8,8 @@ exports.validateJob = (_reqBody) => {
             lng: Joi.number().required()
         },
         time: Joi.date().required(),
-        duration_in_hours: Joi.number().min(0.5).max(3).required(),
-        description: Joi.string().min(2).max(100).required(),
+        duration_in_hours: Joi.number().min(0.5).max(5).required(),
+        description: Joi.string().min(2).max(100),
         specialization:Joi.string().min(2).max(30).required(),
         optional_professionals: Joi.array().items(Joi.string()),
         //payment:Joi.number().min(0).required()
