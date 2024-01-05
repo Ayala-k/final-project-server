@@ -209,7 +209,12 @@ exports.userCtrl = {
 
       if (user) {
         try {
-          sendEmail(email, 'reset password', `http://localhost:5173/reset_password/` + passwordResetToken)
+          sendEmail(email, 'קיבלנו את בקשתך לאיפוס סיסמה', `http://localhost:5173/reset_password/` + passwordResetToken,
+          `<div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+     <h3 style="color: darkblue; font-size: 20px;">קיבלנו את בקשתך לאיפוס סיסמה</h3>
+     <p style="color: #343a40; font-size: 16px; line-height: 1.6;">תוכל לאפס את הסיסמה באמצעות הקישור המצורף. <br/>שים לב, הקישור תקף ל10 דקות בלבד.</p>
+     <span style="color: black; font-size: 14px;"> לאיפוס הסיסמה <a href="http://localhost:5173/reset_password/${passwordResetToken}" style="color: darkblue; text-decoration: none;">לחץ כאן</a></span>
+     </div>`)
         }
         catch (err) {
           return res.status(400).json("ERROR: Failure while sending reset password url");

@@ -15,9 +15,8 @@ function sendEmail(to, subject, text, html) {
     var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'ayalakdeveloper@gmail.com',
-      //pass: 'oiqrjowiichhpqni'
-      pass:'tsypdaekqnienjyk'
+        user: config.mailTrapUser,
+        pass: config.mailTrapPass,
     }
   })
 
