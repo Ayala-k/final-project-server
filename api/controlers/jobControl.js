@@ -29,7 +29,7 @@ exports.jobCtrl = {
             job.optional_professionals.forEach(async (p) => {
                 let email = (await ProfessionalModel.findOne({ _id: p }).populate('user_id')).user_id.email
                 sendEmail(email, '!הצעת עבודה חדשה מחכה לך באתר', JSON.stringify(job),
-                `<div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                    `<div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
                 <h3 style="color: darkblue; font-size: 20px;">!הצעת עבודה חדשה מחכה לך באתר</h3>
                 <p style="color: #343a40; font-size: 16px; line-height: 1.6;">.תוכל לצפות בפרטי ההצעה ולאשר את קבלת ההצעה באתר <br/>שים לב, ביטול ההצעה יתאפשר עד 24 שעות לפני האימון בלבד.</p>
                 <span style="color: black; font-size: 14px;"> לצפייה בפרטי האימון ואישור <a href="http://localhost:5173" style="color: darkblue; text-decoration: none;">לחץ כאן</a></span>
@@ -67,7 +67,7 @@ exports.jobCtrl = {
                 try {
                     let email = (await ProfessionalModel.findOne({ _id: job.contracted_professional }).populate('user_id')).user_id.email
                     sendEmail(email, 'בוצע שינוי בפרטי האימון שלך', JSON.stringify(job),
-                    `<div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                        `<div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
     <h3 style="color: darkblue; font-size: 20px;">בוצע שינוי בפרטי האימון שלך</h3>
     <p style="color: #343a40; font-size: 16px; line-height: 1.6;">.תוכל לצפות בפרטי ההצעה ולבטל את קבלת ההצעה באתר <br/>שים לב, ביטול ההצעה יתאפשר עד 24 שעות לפני האימון בלבד.</p>
     <span style="color: black; font-size: 14px;"> לצפייה בפרטי האימון המעודכנים <a href="http://localhost:5173" style="color: darkblue; text-decoration: none;">לחץ כאן</a></span>
@@ -104,7 +104,7 @@ exports.jobCtrl = {
                 try {
                     let email = (await ProfessionalModel.findOne({ _id: updatedJob.contracted_professional }).populate('user_id')).user_id.email
                     sendEmail(email, 'האימון שלך בוטל על ידי הלקוח', JSON.stringify(updatedJob),
-                    `<div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                        `<div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
     <h3 style="color: darkblue; font-size: 20px;">האימון שלך בוטל על ידי הלקוח</h3>
     <p style="color: #343a40; font-size: 16px; line-height: 1.6;">.תוכל לצפות בהצעות עבודה נוספות באתר <br/></p>
     <span style="color: black; font-size: 14px;"> לצפייה בהצעות שלך <a href="http://localhost:5173" style="color: darkblue; text-decoration: none;">לחץ כאן</a></span>
@@ -168,8 +168,12 @@ exports.jobCtrl = {
 
     getProfessionalOpenJobs: async (req, res) => {
         let user_id = req.tokenData.user_id
-        let professional_id = (await ProfessionalModel.findOne({ user_id }))._id
-
+        try {
+            let professional_id = (await ProfessionalModel.findOne({ user_id }))._id
+        }
+        catch (err) {
+            return res.status(400).send("ERROR: invalid professional")
+        }
         if (!professional_id) {
             return res.status(400).send("ERROR: invalid professional")
         }
@@ -258,7 +262,7 @@ exports.jobCtrl = {
                 try {
                     let email = (await JobModel.findOne({ _id: jobId }).populate('client_id')).client_id.email
                     sendEmail(email, 'המאמן שלך ביטל את השתתפותו', JSON.stringify(updatedJob),
-                    `<div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                        `<div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
                     <h3 style="color: darkblue; font-size: 20px;">המאמן שלך ביטל את השתתפותו</h3>
                     <p style="color: #343a40; font-size: 16px; line-height: 1.6;">.תוכל לקבל מאמן אחר או להזמין אימון חדש באתר <br/></p>
                     <span style="color: black; font-size: 14px;">לצפייה באימונים שלך  <a href="http://localhost:5173" style="color: darkblue; text-decoration: none;">לחץ כאן</a></span>
@@ -309,7 +313,7 @@ exports.jobCtrl = {
                 try {
                     let email = (await JobModel.findOne({ _id: jobId }).populate('client_id')).client_id.email
                     sendEmail(email, 'מצאנו לך מאמן ):', JSON.stringify(updatedJob) + `   http://localhost:5173/paypal/${jobId}`,
-                    `<div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                        `<div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
                     <h3 style="color: darkblue; font-size: 20px;">מצאנו לך מאמן</h3>
                     <p style="color: #343a40; font-size: 16px; line-height: 1.6;">.תוכל לצפות בפרטים באתר <br/></p>
                     <span style="color: black; font-size: 14px;"> לתשלום בפייפאל עבור האימון <a href="http://localhost:5173/paypal/${jobId}" style="color: darkblue; text-decoration: none;">לחץ כאן</a></span>
