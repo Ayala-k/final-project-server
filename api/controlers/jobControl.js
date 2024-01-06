@@ -204,10 +204,15 @@ exports.jobCtrl = {
 
     getProfessionalContractedJobs: async (req, res) => {
         let user_id = req.tokenData.user_id
-        let professional_id = (await ProfessionalModel.findOne({ user_id }))._id
-
+        let professional_id=null
+        try {
+            professional_id = (await ProfessionalModel.findOne({ user_id }))._id
+        }
+        catch (err) {
+            return res.status(400).json("ERROR: invalid professional")
+        }
         if (!professional_id) {
-            return res.status(400).send("ERROR: invalid professional")
+            return res.status(400).json("ERROR: invalid professional")
         }
 
         try {
