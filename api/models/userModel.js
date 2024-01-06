@@ -14,6 +14,9 @@ let userSchema = new mongoose.Schema({
   role: {
     type: String, default: "client", enum: ["admin", "professional", "client"]
   },
+  gender:{
+    type:String,enum:["זכר","נקבה"]
+  },
   date_created: {
     type: Date, default: Date.now()
   },
