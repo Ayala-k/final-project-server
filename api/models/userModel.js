@@ -15,7 +15,7 @@ let userSchema = new mongoose.Schema({
     type: String, default: "client", enum: ["admin", "professional", "client"]
   },
   gender:{
-    type:String,enum:["זכר","נקבה"]
+    type:String,enum:["male","female"]
   },
   date_created: {
     type: Date, default: Date.now()
