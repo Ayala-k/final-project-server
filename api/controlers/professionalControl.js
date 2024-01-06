@@ -75,7 +75,7 @@ exports.professionalCtrl = {
 
     searchProfessional: async (req, res) => {
         try {
-            const { name, profession, specialization, minimalRating, maximalPricePerHour } = req.query;
+            const { name, profession, specialization, minimalRating, maximalPricePerHour, gender } = req.query;
 
             const query = {};
 
@@ -127,6 +127,17 @@ exports.professionalCtrl = {
                 })
             }
 
+            if(gender){
+                professionals=professionals.filter(p=>{
+                    if(p.user_id.gender==gender){
+                        return true
+                    }
+                    else{
+                        return false
+                    }
+                })
+            }
+
             const updatedProfessionals = await Promise.all(
                 professionals.map(async (professional) => {
                     rating = (await commentCtrl.getRating(professional._id, specialization || null)) || 0;
@@ -162,7 +173,7 @@ exports.professionalCtrl = {
     getProfessionalEmail: async (req, res) => {
         let professional_id = req.params.professional_id
         try {
-            let professional=await ProfessionalModel.findOne({ _id: professional_id }).populate('user_id')
+            let professional = await ProfessionalModel.findOne({ _id: professional_id }).populate('user_id')
             let email = professional.user_id.email
             res.json(email)
         }
@@ -174,7 +185,7 @@ exports.professionalCtrl = {
     getProfessionalUserName: async (req, res) => {
         let professional_id = req.params.professional_id
         try {
-            let professional=await ProfessionalModel.findOne({ _id: professional_id }).populate('user_id')
+            let professional = await ProfessionalModel.findOne({ _id: professional_id }).populate('user_id')
             let user_name = professional.user_id.user_name
             res.json(user_name)
         }
