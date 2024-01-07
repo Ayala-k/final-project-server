@@ -15,6 +15,8 @@ router.get('/get_specializations_by_profession/:profession',professionalCtrl.get
 
 router.get('/get_email/:professional_id',authUser,professionalCtrl.getProfessionalEmail)
 
+router.get('/get_phone/:professional_id',authUser,professionalCtrl.getProfessionalPhone)
+
 router.get('/get_user_name/:professional_id',authUser,professionalCtrl.getProfessionalUserName)
 
 router.get('/get_professional_by_user',authUser,professionalCtrl.getProfessionalByUser)

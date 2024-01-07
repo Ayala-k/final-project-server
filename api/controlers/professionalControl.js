@@ -182,6 +182,18 @@ exports.professionalCtrl = {
         }
     },
 
+    getProfessionalPhone: async (req, res) => {
+        let professional_id = req.params.professional_id
+        try {
+            let professional = await ProfessionalModel.findOne({ _id: professional_id }).populate('user_id')
+            let phone = professional.user_id.phone
+            res.json(phone)
+        }
+        catch (err) {
+            res.status(500).json("ERROR")
+        }
+    },
+
     getProfessionalUserName: async (req, res) => {
         let professional_id = req.params.professional_id
         try {
