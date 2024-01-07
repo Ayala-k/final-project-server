@@ -48,7 +48,6 @@ exports.commentCtrl = {
         }
 
         catch (err) {
-            console.log(err);
             res.status(500).json("ERROR")
         }
     },
@@ -92,6 +91,6 @@ exports.commentCtrl = {
             }
         })
 
-        return sum / count
+        return (count!=0&&sum / count)||0
     }
 }
