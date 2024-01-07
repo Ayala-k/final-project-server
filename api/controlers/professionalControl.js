@@ -192,5 +192,16 @@ exports.professionalCtrl = {
         catch (err) {
             res.status(500).json("ERROR")
         }
+    },
+
+    getProfessionalByUser: async (req, res) => {
+        let user_id = req.tokenData.user_id
+        try {
+            let professional = await ProfessionalModel.findOne({ user_id })
+            res.json(professional)
+        }
+        catch (err) {
+            res.status(500).json("ERROR")
+        }
     }
 }
