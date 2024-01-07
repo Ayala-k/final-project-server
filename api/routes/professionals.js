@@ -13,10 +13,10 @@ router.get('/search_professional',authUser,professionalCtrl.searchProfessional)
 
 router.get('/get_specializations_by_profession/:profession',professionalCtrl.getSpecializationsByprofession)
 
-router.get('/get_email/:professional_id',professionalCtrl.getProfessionalEmail)
+router.get('/get_email/:professional_id',authUser,professionalCtrl.getProfessionalEmail)
 
-router.get('/get_user_name/:professional_id',professionalCtrl.getProfessionalUserName)
+router.get('/get_user_name/:professional_id',authUser,professionalCtrl.getProfessionalUserName)
 
-router.get('/get_professional_by_user',professionalCtrl.getProfessionalByUser)
+router.get('/get_professional_by_user',authUser,professionalCtrl.getProfessionalByUser)
 
 module.exports = router;
