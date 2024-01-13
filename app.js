@@ -6,6 +6,7 @@ const { routesInit } = require("./api/routes/config_routes")
 require("./api/db/mongoconnect");
 const cookieParser = require('cookie-parser')
 require('./api/helpers/dailyEmails')
+const {loadData}=require('./api/helpers/loadData')
 
 const app = express();
 
@@ -23,6 +24,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")))
 
 routesInit(app);
+
+loadData()
 
 const server = http.createServer(app);
 
