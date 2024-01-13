@@ -54,7 +54,7 @@ exports.jobCtrl = {
 
         try {
             let job = await JobModel.findOneAndUpdate(
-                { _id: jobId, client_id: req.tokenData.user_id },
+                { _id: jobId, client_id: req.tokenData.user_id,contracted_professional:null },
                 req.body,
                 { new: true }
             )
