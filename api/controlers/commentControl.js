@@ -2,6 +2,8 @@ const { validateComment } = require('../validation/commentValidation')
 const { CommentModel } = require('../models/commentsModel')
 const { ProfessionalModel } = require('../models/professionalModel')
 const { isProfession, isSpecializationOfProfession } = require('../helpers/validateProfessionAndSpecialization')
+const { UserModel } = require('../models/userModel')
+const { sendEmail } = require('../helpers/sendEmail')
 
 
 exports.commentCtrl = {
@@ -20,6 +22,30 @@ exports.commentCtrl = {
             res.status(201).json(comment);
         }
 
+        catch (err) {
+            console.log(err);
+            res.status(500).json("ERROR")
+        }
+    },
+
+    report: async (req, res) => {
+        try {
+            let admins = await UserModel.find({ role: "admin" })
+
+            let reported_user = await UserModel.findOne({ _id: req.body.user_id })
+
+            let url = 'http://localhost:5173/block/' + reported_user._id
+
+            admins.forEach(a => {
+                sendEmail(a.email, 'דווח על שימוש לרעה במערכת', url,
+                    `<div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                    <h3 style="color: darkblue; font-size: 20px;">דווח כי ${reported_user.user_name} השתמש לרעה במערכת, באפשרותך לחסום את אותו.</h3>
+                    <p style="color: #343a40; font-size: 16px; line-height: 1.6;">${req.body.text}<br/></p>
+                    <span style="color: black; font-size: 14px;"> לחסימת המשתמש<a href="${url}" style="color: darkblue; text-decoration: none;">לחץ כאן</a></span>
+                    </div>`);
+            })
+            res.json('report sent successfully')
+        }
         catch (err) {
             console.log(err);
             res.status(500).json("ERROR")
@@ -91,6 +117,6 @@ exports.commentCtrl = {
             }
         })
 
-        return (count!=0&&sum / count)||0
+        return (count != 0 && sum / count) || 0
     }
 }

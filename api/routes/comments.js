@@ -6,6 +6,8 @@ const router = express.Router();
 
 router.post("/create_comment", authUser, commentCtrl.createComment)
 
+router.get("/report", authUser, commentCtrl.report)
+
 router.get("/get_professional_comments/:professional_id", authUser, commentCtrl.getProfessionalComments)
 
 router.get("/get_professional_rating/:professional_id", authUser, commentCtrl.getProfessionalRating)
