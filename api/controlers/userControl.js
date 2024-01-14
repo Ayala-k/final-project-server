@@ -118,16 +118,16 @@ exports.userCtrl = {
 
     try {
       const updatedUser = await UserModel.findOneAndUpdate(
-        { _id: user_id },
+        { _id: user_id,is_blocked:false },
         { $set: { is_blocked: true } },
         { new: true }
-      )
+      ) 
 
       if (!updatedUser) {
-        return res.status(400).json("ERROR: invalid user")
+        return res.status(400).json("ERROR: invalid unblocked user")
       }
 
-      res.json(updatedUser)
+      res.json("Blocked successfully")
     }
 
     catch (err) {
