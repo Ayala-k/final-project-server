@@ -32,7 +32,7 @@ exports.commentCtrl = {
         try {
             let admins = await UserModel.find({ role: "admin" })
 
-            let reported_user = await UserModel.findOne({ _id: req.body.user_name })
+            let reported_user = await UserModel.findOne({ user_name: req.body.user_name })
             if(!reported_user){
                 res.status(404).json('ERROR: invalid user')
             }
