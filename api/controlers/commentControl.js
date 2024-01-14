@@ -32,7 +32,10 @@ exports.commentCtrl = {
         try {
             let admins = await UserModel.find({ role: "admin" })
 
-            let reported_user = await UserModel.findOne({ _id: req.body.user_id })
+            let reported_user = await UserModel.findOne({ _id: req.body.user_name })
+            if(!reported_user){
+                res.status(404).json('ERROR: invalid user')
+            }
 
             let url = 'http://localhost:5173/block/' + reported_user._id
 
