@@ -54,7 +54,7 @@ exports.jobCtrl = {
 
         try {
             let job = await JobModel.findOneAndUpdate(
-                { _id: jobId, client_id: req.tokenData.user_id,contracted_professional:null },
+                { _id: jobId, client_id: req.tokenData.user_id, contracted_professional: null },
                 req.body,
                 { new: true }
             )
@@ -155,8 +155,37 @@ exports.jobCtrl = {
         let client_id = req.tokenData.user_id
 
         try {
+            const currentDateTime = new Date()
+
             const jobs = await JobModel.find(
-                { client_id, is_canceled: false, contracted_professional: { $ne: null } }
+                {
+                    client_id,
+                    is_canceled: false,
+                    contracted_professional: { $ne: null },
+                    time: { $gte: currentDateTime },
+                }
+            ).populate('client_id').populate('contracted_professional');
+
+            res.json(jobs)
+        }
+        catch (err) {
+            res.status(500).json("ERROR")
+        }
+    },
+
+    getClientPreviousJobs: async (req, res) => {
+        let client_id = req.tokenData.user_id
+
+        try {
+            const currentDateTime = new Date()
+
+            const jobs = await JobModel.find(
+                {
+                    client_id,
+                    is_canceled: false,
+                    contracted_professional: { $ne: null },
+                    time: { $lt: currentDateTime },
+                }
             ).populate('client_id').populate('contracted_professional');
 
             res.json(jobs)
@@ -168,7 +197,7 @@ exports.jobCtrl = {
 
     getProfessionalOpenJobs: async (req, res) => {
         let user_id = req.tokenData.user_id
-        let professional_id=null
+        let professional_id = null
         try {
             professional_id = (await ProfessionalModel.findOne({ user_id }))._id
         }
@@ -204,7 +233,7 @@ exports.jobCtrl = {
 
     getProfessionalContractedJobs: async (req, res) => {
         let user_id = req.tokenData.user_id
-        let professional_id=null
+        let professional_id = null
         try {
             professional_id = (await ProfessionalModel.findOne({ user_id }))._id
         }
@@ -220,6 +249,37 @@ exports.jobCtrl = {
 
             const jobs = await JobModel.find({
                 time: { $gte: currentDateTime },
+                contracted_professional: professional_id,
+                is_canceled: false
+            }).populate('client_id').populate('contracted_professional')
+
+            res.json(jobs)
+
+        }
+        catch (err) {
+            res.status(500).json("ERROR")
+        }
+
+    },
+
+    getProfessionalPreviousJobs: async (req, res) => {
+        let user_id = req.tokenData.user_id
+        let professional_id = null
+        try {
+            professional_id = (await ProfessionalModel.findOne({ user_id }))._id
+        }
+        catch (err) {
+            return res.status(400).json("ERROR: invalid professional")
+        }
+        if (!professional_id) {
+            return res.status(400).json("ERROR: invalid professional")
+        }
+
+        try {
+            const currentDateTime = new Date()
+
+            const jobs = await JobModel.find({
+                time: { $lt: currentDateTime },
                 contracted_professional: professional_id,
                 is_canceled: false
             }).populate('client_id').populate('contracted_professional')

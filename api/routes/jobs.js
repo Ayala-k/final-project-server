@@ -16,9 +16,13 @@ router.get('/get_client_open_jobs',authUser,jobCtrl.getClientOpenJobs)
 
 router.get('/get_client_contracted_jobs',authUser,jobCtrl.getClientContractedJobs)
 
+router.get('/get_client_previous_jobs',authUser,jobCtrl.getClientPreviousJobs)
+
 router.get('/get_professional_open_jobs',authUser,jobCtrl.getProfessionalOpenJobs)
 
 router.get('/get_professional_contracted_jobs',authUser,jobCtrl.getProfessionalContractedJobs)
+
+router.get('/get_professional_previous_jobs',authUser,jobCtrl.getProfessionalPreviousJobs)
 
 router.patch('/remove_professional_from_job/:job_id',authUser,jobCtrl.removeProfessionalFromJob)
 
