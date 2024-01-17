@@ -43,7 +43,7 @@ const sendDailyEmails = async () => {
     }
 }
 
-cron.schedule('00 12 * * *', () => {
+cron.schedule('00 8 * * *', () => {
     sendDailyEmails();
     console.log('This runs every day at mid-day!');
 });
