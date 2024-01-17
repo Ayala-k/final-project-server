@@ -13,18 +13,18 @@ exports.commentCtrl = {
 
         let validBody = validateComment(req.body)
         if (validBody.error) {
-            return res.status(400).json("ERROR: invalid comment details " + validBody.error.details[0].message);
+            return res.status(400).json({ data: "ERROR: invalid comment details " + validBody.error.details[0].message, code: 100 });
         }
 
         try {
             let comment = new CommentModel(req.body);
             await comment.save();
-            res.status(201).json(comment);
+            res.status(201).json({data:comment,code:0});
         }
 
         catch (err) {
             console.log(err);
-            res.status(500).json("ERROR")
+            res.status(500).json({data:"ERROR",code:101})
         }
     },
 
@@ -33,8 +33,8 @@ exports.commentCtrl = {
             let admins = await UserModel.find({ role: "admin" })
 
             let reported_user = await UserModel.findOne({ user_name: req.body.user_name })
-            if(!reported_user){ 
-                res.status(404).json('ERROR: invalid user')
+            if (!reported_user) {
+                res.status(404).json({data:'ERROR: invalid user',code:102})
             }
 
             let url = 'http://localhost:5173/block/' + reported_user._id
@@ -47,11 +47,11 @@ exports.commentCtrl = {
                     <span style="color: black; font-size: 14px;"> לחסימת המשתמש<a href="${url}" style="color: darkblue; text-decoration: none;">לחץ כאן</a></span>
                     </div>`);
             })
-            res.json('report sent successfully')
+            res.json({data:'report sent successfully',code:103})
         }
         catch (err) {
             console.log(err);
-            res.status(500).json("ERROR")
+            res.status(500).json({data:"ERROR",code:101})
         }
     },
 
@@ -60,12 +60,12 @@ exports.commentCtrl = {
 
         try {
             let comments = await CommentModel.find({ professional_id: professional }).populate('writer_id')
-            res.json(comments)
+            res.json({data:comments,code:0})
         }
 
         catch (err) {
             console.log(err);
-            res.status(500).json("ERROR")
+            res.status(500).json({data:"ERROR",code:101})
         }
     },
 
@@ -73,11 +73,11 @@ exports.commentCtrl = {
         let professional = req.params.professional_id
 
         try {
-            res.json(await this.commentCtrl.getRating(professional, null))
+            res.json({data:(await this.commentCtrl.getRating(professional, null)),code:0})
         }
 
         catch (err) {
-            res.status(500).json("ERROR")
+            res.status(500).json({data:"ERROR",code:101})
         }
     },
 
@@ -87,16 +87,16 @@ exports.commentCtrl = {
 
         let profession = (await ProfessionalModel.findOne({ _id: professional })).profession
         if (!isProfession(profession) || !isSpecializationOfProfession(profession, specialization)) {
-            return res.status(400).json("ERROR: invalid specialization")
+            return res.status(400).json({data:"ERROR: invalid specialization",code:100})
         }
 
         try {
-            res.json(await this.commentCtrl.getRating(professional, specialization))
+            res.json({data:(await this.commentCtrl.getRating(professional, specialization)),code:0})
         }
 
         catch (err) {
             console.log(err);
-            res.status(500).json("ERROR")
+            res.status(500).json({data:"ERROR",code:101})
         }
     },
 

@@ -14,10 +14,10 @@ exports.professionalCtrl = {
 
         let validBody = validateProfessional(req.body);
         if (validBody.error) {
-            return res.status(400).json("ERROR: invalid comment details " + validBody.error.details[0].message);
+            return res.status(400).json({data:"ERROR: invalid comment details " + validBody.error.details[0].message,code:100});
         }
         if (!isProfession(req.body.profession)) {
-            return res.status(400).json("ERROR: invalid profession");
+            return res.status(400).json({data:"ERROR: invalid profession",code:100});
         }
         let flag = false
         req.body.specializations.forEach(s => {
@@ -27,7 +27,7 @@ exports.professionalCtrl = {
             }
         })
         if (flag == true) {
-            return res.status(400).json("ERROR: invalid specialization");
+            return res.status(400).json({data:"ERROR: invalid specialization",code:100});
         }
 
         try {
@@ -39,10 +39,10 @@ exports.professionalCtrl = {
                 { role: "professional" },
             );
 
-            res.json(professional)
+            res.json({data:professional,code:0})
         }
         catch (err) {
-            res.status(500).json("ERROR")
+            res.status(500).json({data:"ERROR",code:101})
         }
 
     },
@@ -52,7 +52,7 @@ exports.professionalCtrl = {
 
         let validBody = validateProfessional(req.body);
         if (validBody.error) {
-            return res.status(400).json("ERROR: invalid comment details " + validBody.error.details[0].message);
+            return res.status(400).json({data:"ERROR: invalid comment details " + validBody.error.details[0].message,code:100});
         }
 
         try {
@@ -62,14 +62,14 @@ exports.professionalCtrl = {
                 { new: true })
 
             if (!updatedprofessional) {
-                return res.status(400).json("ERROR: invalid professional")
+                return res.status(400).json({data:"ERROR: invalid professional",code:100})
             }
 
-            res.json(updatedprofessional);
+            res.json({data:updatedprofessional,code:0});
         }
 
         catch (err) {
-            res.status(500).json("ERROR")
+            res.status(500).json({data:"ERROR",code:101})
         }
     },
 
@@ -145,10 +145,10 @@ exports.professionalCtrl = {
                 })
             );
 
-            res.status(200).json({ professionals: updatedProfessionals });
+            res.status(200).json({data:{ professionals: updatedProfessionals },code:0});
         }
         catch (err) {
-            res.status(500).json("ERROR");
+            res.status(500).json({data:"ERROR",code:101})
         }
     },
 
@@ -163,10 +163,10 @@ exports.professionalCtrl = {
                 }
             });
 
-            res.json(specializations);
+            res.json({data:specializations,code:0});
         }
         catch (error) {
-            res.status(500).json("ERROR");
+            res.status(500).json({data:"ERROR",code:101})
         }
     },
 
@@ -175,10 +175,10 @@ exports.professionalCtrl = {
         try {
             let professional = await ProfessionalModel.findOne({ _id: professional_id }).populate('user_id')
             let email = professional.user_id.email
-            res.json(email)
+            res.json({data:email,code:0})
         }
         catch (err) {
-            res.status(500).json("ERROR")
+            res.status(500).json({data:"ERROR",code:101})
         }
     },
 
@@ -187,10 +187,10 @@ exports.professionalCtrl = {
         try {
             let professional = await ProfessionalModel.findOne({ _id: professional_id }).populate('user_id')
             let phone = professional.user_id.phone
-            res.json(phone)
+            res.json({data:phone,code:0})
         }
         catch (err) {
-            res.status(500).json("ERROR")
+            res.status(500).json({data:"ERROR",code:101})
         }
     },
 
@@ -199,10 +199,10 @@ exports.professionalCtrl = {
         try {
             let professional = await ProfessionalModel.findOne({ _id: professional_id }).populate('user_id')
             let user_name = professional.user_id.user_name
-            res.json(user_name)
+            res.json({data:user_name,code:0})
         }
         catch (err) {
-            res.status(500).json("ERROR")
+            res.status(500).json({data:"ERROR",code:101})
         }
     },
 
@@ -210,10 +210,10 @@ exports.professionalCtrl = {
         let user_id = req.tokenData.user_id
         try {
             let professional = await ProfessionalModel.findOne({ user_id })
-            res.json(professional)
+            res.json({data:professional,code:0})
         }
         catch (err) {
-            res.status(500).json("ERROR")
+            res.status(500).json({data:"ERROR",code:101})
         }
     }
 }

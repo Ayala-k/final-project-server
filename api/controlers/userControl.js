@@ -12,32 +12,31 @@ exports.userCtrl = {
 
     let validBody = loginValidation(req.body);
     if (validBody.error) {
-      return res.status(400).json("ERROR: invalid comment details " + validBody.error.details[0].message);
+      return res.status(400).json({data:"ERROR: invalid comment details " + validBody.error.details[0].message,code:100});
     }
 
     try {
       let user = await UserModel.findOne({ user_name: req.body.user_name })
 
       if (!user) {
-        return res.status(401).json("ERROR: wrong user name or password")
+        return res.status(401).json({data:"ERROR: wrong user name or password",code:108})
       }
 
       if (user.is_blocked) {
-        return res.status(401).json("YOU ARE BLOCKED")
+        return res.status(401).json({data:"YOU ARE BLOCKED",code:109})
       }
 
       let authPassword = await bcrypt.compare(req.body.password, user.password);
       if (!authPassword) {
-        return res.status(401).json("ERROR: wrong user name or password");
+        return res.status(401).json({data:"ERROR: wrong user name or password",code:108});
       }
 
       let token = createToken(user._id, user.role)
-      //delete the header here???
-      res.header('Authorization', `Bearer ${token}`).json({ msg: "LOG IN SUCCESSFULY", token: `Bearer ${token}`, user });
+      res.header('Authorization', `Bearer ${token}`).json({data:{ token: `Bearer ${token}`, user },code:110});
     }
 
     catch (err) {
-      res.status(500).json("ERROR")
+      res.status(500).json({data:"ERROR",code:101})
     }
   },
 
@@ -45,7 +44,7 @@ exports.userCtrl = {
 
     let validBody = userValidation(req.body);
     if (validBody.error) {
-      return res.status(400).json("ERROR: invalid comment details " + validBody.error.details[0].message);
+      return res.status(400).json({data:"ERROR: invalid comment details " + validBody.error.details[0].message,code:100});
     }
 
     try {
@@ -57,31 +56,21 @@ exports.userCtrl = {
 
       let token = createToken(user._id, user.role);
       //delete the header here???
-      res.header('Authorization', `Bearer ${token}`).json({ msg: "SIGN UP SUCCESSFULY", token: `Bearer ${token}`, user });
+      res.header('Authorization', `Bearer ${token}`).json({data:{ token: `Bearer ${token}`, user },code:111});
     }
 
     catch (err) {
       if (err.code == 11000) {
-        return res.status(500).json("ERROR: user name or email already in system, try log in")
+        return res.status(500).json({data:"ERROR: user name or email already in system, try log in",code:112})
       }
-      res.status(500).json("ERROR")
+      res.status(500).json({data:"ERROR",code:101})
     }
-  },
-
-  logOut: async (req, res) => {
-    //changeee
-    // if (req.cookies.access_token != null) {
-    //   res.clearCookie('access_token');
-    //   return res.json('Cookie cleared');
-    // }
-
-    // res.status(400).json("log out failed no cookies")
   },
 
   update: async (req, res) => {
     let validBody = userValidation(req.body);
     if (validBody.error) {
-      return res.status(400).json("ERROR: invalid comment details " + validBody.error.details[0].message);
+      return res.status(400).json({data:"ERROR: invalid comment details " + validBody.error.details[0].message,code:100});
     }
 
     req.body.user_id = req.tokenData.user_id
@@ -91,7 +80,7 @@ exports.userCtrl = {
 
       let samePasswords = await bcrypt.compare(req.body.password, user.password);
       if (!samePasswords && req.body.password != user.password && req.body.password != "********") {
-        return res.status(400).json("ERROR: can not change password")
+        return res.status(400).json({data:"ERROR: can not change password",code:113})
       }
 
       req.body.phone =  req.body.phone.toString()
@@ -102,14 +91,14 @@ exports.userCtrl = {
         { new: true })
 
       if (!updatetdUser) {
-        return res.status(400).json("ERROR: invalid user")
+        return res.status(400).json({data:"ERROR: invalid user",code:102})
       }
 
-      res.status(200).json(updatetdUser);
+      res.status(200).json({data:updatetdUser,code:0});
     }
 
     catch (err) {
-      res.status(500).json("ERROR")
+      res.status(500).json({data:"ERROR",code:101})
     }
   },
 
@@ -124,14 +113,14 @@ exports.userCtrl = {
       ) 
 
       if (!updatedUser) {
-        return res.status(400).json("ERROR: invalid unblocked user")
+        return res.status(400).json({data:"ERROR: invalid unblocked user",code:102})
       }
 
-      res.json("Blocked successfully")
+      res.json({data:"Blocked successfully",code:114})
     }
 
     catch (err) {
-      res.status(500).json("ERROR")
+      res.status(500).json({data:"ERROR",code:101})
     }
   },
 
@@ -146,14 +135,14 @@ exports.userCtrl = {
       )
 
       if (!updatedUser) {
-        return res.status(400).json("ERROR: invalid user")
+        return res.status(400).json({data:"ERROR: invalid user",code:102})
       }
 
-      res.json(updatedUser)
+      res.json({data:updatedUser,code:0})
     }
 
     catch (err) {
-      res.status(500).json("ERROR")
+      res.status(500).json({data:"ERROR",code:101})
     }
   },
 
@@ -163,7 +152,7 @@ exports.userCtrl = {
     const confirmNewPassword = req.body.confirm_new_password
 
     if (newPassword != confirmNewPassword) {
-      return res.status(400).json('ERROR: different passwords')
+      return res.status(400).json({data:'ERROR: different passwords',code:115})
     }
 
     let encryptedPasssword = await bcrypt.hash(newPassword, 10)
@@ -181,17 +170,17 @@ exports.userCtrl = {
         { new: true })
 
       if (!user) {
-        return res.status(400).json('ERROR: token is expired or wrong');
+        return res.status(400).json({data:'ERROR: token is expired or wrong',code:116});
       }
 
       user.password = "********";
       let token = createToken(user._id, user.role)
       //delete the header here???
-      res.header('Authorization', `Bearer ${token}`).json({ msg: "LOG IN SUCCESSFULY", token: `Bearer ${token}`, user });
+      res.header('Authorization', `Bearer ${token}`).json({data:{  token: `Bearer ${token}`, user },code:110});
     }
 
     catch (err) {
-      return res.status(500).json("ERROR")
+      res.status(500).json({data:"ERROR",code:101})
     }
   },
 
@@ -217,20 +206,19 @@ exports.userCtrl = {
      </div>`)
         }
         catch (err) {
-          return res.status(400).json("ERROR: Failure while sending reset password url");
+          return res.status(400).json({data:"ERROR: Failure while sending reset password url",code:104});
         }
       }
       else {
-        return res.status(400).json("ERROR: invalid user")
+        return res.status(400).json({data:"ERROR: invalid user",code:102})
       }
 
-      res.status(200).json("reset token sent")
+      res.status(200).json({data:"reset token sent",code:117})
     }
 
     catch (err) {
-      res.status(500).json("ERROR")
+      res.status(500).json({data:"ERROR",code:101})
     }
-
   }
 }
 

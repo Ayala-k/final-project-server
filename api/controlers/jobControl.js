@@ -12,7 +12,7 @@ exports.jobCtrl = {
 
         let validBody = validateJob(req.body);
         if (validBody.error || req.body.optional_professionals.length < 1) {
-            return res.status(400).json("ERROR: invalid comment details " + validBody.error.details[0].message);
+            return res.status(400).json({ data: "ERROR: invalid comment details " + validBody.error.details[0].message, code: 100 });
         }
 
         let job
@@ -22,7 +22,7 @@ exports.jobCtrl = {
             await job.save();
         }
         catch (err) {
-            return res.status(500).json("ERROR");
+            res.status(500).json({ data: "ERROR", code: 101 })
         }
 
         try {
@@ -35,10 +35,10 @@ exports.jobCtrl = {
                 <span style="color: black; font-size: 14px;"> לצפייה בפרטי האימון ואישור <a href="http://localhost:5173" style="color: darkblue; text-decoration: none;">לחץ כאן</a></span>
                 </div>`)
             });
-            res.status(201).send({ job })
+            res.status(201).send({ data: job, code: 0 })
         }
         catch (err) {
-            return res.status(201).json("ERROR: Failure while notifying optional professionals");
+            return res.status(201).json({ data: "ERROR: Failure while notifying optional professionals", code: 104 });
         }
     },
 
@@ -47,7 +47,7 @@ exports.jobCtrl = {
 
         let validBody = validateJob(req.body)
         if (validBody.error || req.body.optional_professionals.length < 1) {
-            return res.status(400).json("ERROR: invalid comment details " + validBody.error.details[0].message);
+            return res.status(400).json({ data: "ERROR: invalid comment details " + validBody.error.details[0].message, code: 100 });
         }
 
         let jobId = req.params.job_id
@@ -60,7 +60,7 @@ exports.jobCtrl = {
             )
 
             if (!job) {
-                return res.status(400).send("ERROR: invalid job")
+                return res.status(400).send({ data: "ERROR: invalid job", code: 105 })
             }
 
             if (job.contracted_professional) {
@@ -74,14 +74,14 @@ exports.jobCtrl = {
     </div>`)
                 }
                 catch (err) {
-                    return res.status(201).json("ERROR: Failure while notifying contracted professional");
+                    return res.status(201).json({ data: "ERROR: Failure while notifying contracted professional", code: 104 });
                 }
             }
 
-            res.json(job)
+            res.json({ data: job, code: 0 })
         }
         catch (err) {
-            return res.status(500).json({ "ERROR: ": err });
+            res.status(500).json({ data: "ERROR", code: 101 })
         }
     },
 
@@ -97,7 +97,7 @@ exports.jobCtrl = {
             )
 
             if (!updatedJob) {
-                return res.status(400).send("ERROR: invalid job")
+                return res.status(400).send({data:"ERROR: invalid job",code:105})
             }
 
             if (updatedJob.contracted_professional) {
@@ -111,32 +111,29 @@ exports.jobCtrl = {
     </div>`)
                 }
                 catch (err) {
-                    return res.status(201).json("ERROR: Failure while notifying contracted professional");
+                    return res.status(201).json({data:"ERROR: Failure while notifying contracted professional",code:104});
                 }
             }
 
-            res.json(updatedJob)
+            res.json({data:updatedJob,code:0})
         }
 
         catch (err) {
-            return res.status(500).json({ "ERROR: ": err });
+            res.status(500).json({data:"ERROR",code:101})
         }
     },
 
-
-    //cancel
     getClientJobs: async (req, res) => {
         let client_id = req.tokenData.user_id
 
         try {
             const jobs = await JobModel.find({ client_id, is_canceled: false }).populate('client_id').populate('contracted_professional')
-            res.json(jobs)
+            res.json({data:jobs,code:0})
         }
         catch (err) {
-            res.status(500).json("ERROR")
+            res.status(500).json({data:"ERROR",code:101})
         }
     },
-
 
     getClientOpenJobs: async (req, res) => {
         let client_id = req.tokenData.user_id
@@ -144,10 +141,10 @@ exports.jobCtrl = {
         try {
             const jobs = await JobModel.find(
                 { client_id, is_canceled: false, contracted_professional: null }).populate('client_id')
-            res.json(jobs)
+            res.json({data:jobs,code:0})
         }
         catch (err) {
-            res.status(500).json("ERROR")
+            res.status(500).json({data:"ERROR",code:101})
         }
     },
 
@@ -166,10 +163,10 @@ exports.jobCtrl = {
                 }
             ).populate('client_id').populate('contracted_professional');
 
-            res.json(jobs)
+            res.json({data:jobs,code:0})
         }
         catch (err) {
-            res.status(500).json("ERROR")
+            res.status(500).json({data:"ERROR",code:101})
         }
     },
 
@@ -188,10 +185,10 @@ exports.jobCtrl = {
                 }
             ).populate('client_id').populate('contracted_professional');
 
-            res.json(jobs)
+            res.json({data:jobs,code:0})
         }
         catch (err) {
-            res.status(500).json("ERROR")
+            res.status(500).json({data:"ERROR",code:101})
         }
     },
 
@@ -202,10 +199,10 @@ exports.jobCtrl = {
             professional_id = (await ProfessionalModel.findOne({ user_id }))._id
         }
         catch (err) {
-            return res.status(400).json("ERROR: invalid professional")
+            return res.status(400).json({data:"ERROR: invalid professional",code:106})
         }
         if (!professional_id) {
-            return res.status(400).json("ERROR: invalid professional")
+            return res.status(400).json({data:"ERROR: invalid professional",code:106})
         }
 
         try {
@@ -224,10 +221,10 @@ exports.jobCtrl = {
                 }
             })
 
-            res.json(jobs)
+            res.json({data:jobs,code:0})
         }
         catch (err) {
-            res.status(500).json("ERROR")
+            res.status(500).json({data:"ERROR",code:101})
         }
     },
 
@@ -238,10 +235,10 @@ exports.jobCtrl = {
             professional_id = (await ProfessionalModel.findOne({ user_id }))._id
         }
         catch (err) {
-            return res.status(400).json("ERROR: invalid professional")
+            return res.status(400).json({data:"ERROR: invalid professional",code:106})
         }
         if (!professional_id) {
-            return res.status(400).json("ERROR: invalid professional")
+            return res.status(400).json({data:"ERROR: invalid professional",code:106})
         }
 
         try {
@@ -253,11 +250,11 @@ exports.jobCtrl = {
                 is_canceled: false
             }).populate('client_id').populate('contracted_professional')
 
-            res.json(jobs)
+            res.json({data:jobs,code:0})
 
         }
         catch (err) {
-            res.status(500).json("ERROR")
+            res.status(500).json({data:"ERROR",code:101})
         }
 
     },
@@ -269,10 +266,10 @@ exports.jobCtrl = {
             professional_id = (await ProfessionalModel.findOne({ user_id }))._id
         }
         catch (err) {
-            return res.status(400).json("ERROR: invalid professional")
+            return res.status(400).json({data:"ERROR: invalid professional",code:106})
         }
         if (!professional_id) {
-            return res.status(400).json("ERROR: invalid professional")
+            return res.status(400).json({data:"ERROR: invalid professional",code:106})
         }
 
         try {
@@ -284,11 +281,11 @@ exports.jobCtrl = {
                 is_canceled: false
             }).populate('client_id').populate('contracted_professional')
 
-            res.json(jobs)
+            res.json({data:jobs,code:0})
 
         }
         catch (err) {
-            res.status(500).json("ERROR")
+            res.status(500).json({data:"ERROR",code:101})
         }
 
     },
@@ -300,13 +297,13 @@ exports.jobCtrl = {
         let professional_id = (await ProfessionalModel.findOne({ user_id }))._id
 
         if (!professional_id) {
-            return res.status(400).send("ERROR: invalid professional")
+            return res.status(400).send({data:"ERROR: invalid professional",code:106})
         }
 
         const job = await JobModel.findOne({ _id: jobId, contracted_professional: professional_id })
 
         if (!job) {
-            return res.status(400).send("ERROR: invalid job")
+            return res.status(400).send({data:"ERROR: invalid job",code:105})
         }
 
         if (job.time) {
@@ -316,7 +313,7 @@ exports.jobCtrl = {
             const timeDifference = jobTime.getTime() - currentDateTime.getTime();
 
             if (timeDifference < 24 * 60 * 60 * 1000) {
-                return res.status(400).json('ERROR: too late to cancel')
+                return res.status(400).json({data:'ERROR: too late to cancel',code:107})
             }
             else {
                 let updatedJob = await JobModel.findOneAndUpdate(
@@ -335,14 +332,14 @@ exports.jobCtrl = {
                     </div>`)
                 }
                 catch (err) {
-                    return res.status(201).json("ERROR: Failure while notifying client");
+                    return res.status(201).json({data:"ERROR: Failure while notifying client",code:104});
                 }
 
-                res.json(updatedJob)
+                res.json({data:updatedJob,code:0})
             }
         }
         else {
-            return res.status(500).json({ "ERROR: ": err })
+            res.status(500).json({data:"ERROR",code:101})
         }
     },
 
@@ -351,7 +348,7 @@ exports.jobCtrl = {
         let professional_id = (await ProfessionalModel.findOne({ user_id }))._id
 
         if (!professional_id) {
-            return res.status(400).send("ERROR: invalid professional")
+            return res.status(400).send({data:"ERROR: invalid professional",code:106})
         }
 
         let jobId = req.params.job_id
@@ -370,7 +367,7 @@ exports.jobCtrl = {
             )
 
             if (!updatedJob) {
-                return res.status(400).json("ERROR: invalid job")
+                return res.status(400).json({data:"ERROR: invalid job",code:105})
             }
 
             if (updatedJob) {
@@ -386,34 +383,30 @@ exports.jobCtrl = {
                     </div>`)
                 }
                 catch (err) {
-                    return res.status(201).json("ERROR: Failure while notifying client");
+                    return res.status(201).json({data:"ERROR: Failure while notifying client",code:104});
                 }
             }
 
-            res.json(updatedJob)
+            res.json({data:updatedJob,code:0})
         }
         catch (err) {
-            res.status(500).json("ERROR")
+            res.status(500).json({data:"ERROR",code:101})
         }
     },
 
     getJob: async (req, res) => {
         let jobId = req.params.job_id
         try {
-            // let job = await JobModel.findOne({ _id: jobId })
-            //     .populate('contracted_professional')
-            //     .populate('contracted_professional.user_id')
-            //     .populate('client_id')
             const job = await JobModel.findOne({ _id: jobId })
                 .populate('client_id').populate('contracted_professional')
             console.log(job);
             if (!job) {
-                return res.status(400).json("ERROR: invalid job")
+                return res.status(400).json({data:"ERROR: invalid job",code:105})
             }
-            res.json(job)
+            res.json({data:job,code:0})
         }
         catch (err) {
-            res.status(500).json("ERROR")
+            res.status(500).json({data:"ERROR",code:101})
         }
     },
 

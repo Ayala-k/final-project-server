@@ -2,7 +2,6 @@ const { ThreadModel } = require("../models/threadModel");
 const { validateThread, validateReply } = require("../validation/threadValidation");
 
 
-
 exports.threadCtrl = {
 
     createThread: async (req, res) => {
@@ -10,18 +9,18 @@ exports.threadCtrl = {
 
         let validBody = validateThread(req.body)
         if (validBody.error) {
-            return res.status(400).json("ERROR: invalid thread details " + validBody.error.details[0].message);
+            return res.status(400).json({data:"ERROR: invalid thread details " + validBody.error.details[0].message,code:100});
         }
 
         try {
             let thread = new ThreadModel(req.body);
             await thread.save();
-            res.status(201).json(thread);
+            res.status(201).json({data:thread,code:0});
         }
 
         catch (err) {
             console.log(err);
-            res.status(500).json("ERROR")
+            res.status(500).json({data:"ERROR",code:101})
         }
     },
 
@@ -31,13 +30,13 @@ exports.threadCtrl = {
 
         let validBody = validateReply(req.body)
         if (validBody.error) {
-            return res.status(400).json("ERROR: invalid reply details " + validBody.error.details[0].message);
+            return res.status(400).json({data:"ERROR: invalid reply details " + validBody.error.details[0].message,code:100});
         }
 
         try {
             let thread = await ThreadModel.findOne({ _id: thread_id })
             if (!thread) {
-                res.status(404).json('ERROR: invalid thread')
+                res.status(404).json({data:'ERROR: invalid thread',code:100})
             }
 
             let updatedReplies = [...thread.replies, req.body]
@@ -46,12 +45,12 @@ exports.threadCtrl = {
                 { replies: updatedReplies },
                 { new: true }
             )
-            res.json(updatedThread)
+            res.json({data:updatedThread,code:0})
         }
 
         catch (err) {
             console.log(err);
-            res.status(500).json("ERROR")
+            res.status(500).json({data:"ERROR",code:101})
         }
     },
 
@@ -63,101 +62,13 @@ exports.threadCtrl = {
                     path: 'replier_id',
                 }
             })
-            res.json(threads)
+            res.json({data:threads,code:0})
         }
 
 
         catch (err) {
             console.log(err);
-            res.status(500).json("ERROR")
+            res.status(500).json({data:"ERROR",code:101})
         }
     }
-
-    // createComment: async (req, res) => {
-    //     req.body.writer_id = req.tokenData.user_id
-
-    //     let validBody = validateComment(req.body)
-    //     if (validBody.error) {
-    //         return res.status(400).json("ERROR: invalid comment details " + validBody.error.details[0].message);
-    //     }
-
-    //     try {
-    //         let comment = new CommentModel(req.body);
-    //         await comment.save();
-    //         res.status(201).json(comment);
-    //     }
-
-    //     catch (err) {
-    //         console.log(err);
-    //         res.status(500).json("ERROR")
-    //     }
-    // },
-
-    // getProfessionalComments: async (req, res) => {
-    //     let professional = req.params.professional_id
-
-    //     try {
-    //         let comments = await CommentModel.find({ professional_id: professional }).populate('writer_id')
-    //         res.json(comments)
-    //     }
-
-    //     catch (err) {
-    //         console.log(err);
-    //         res.status(500).json("ERROR")
-    //     }
-    // },
-
-    // getProfessionalRating: async (req, res) => {
-    //     let professional = req.params.professional_id
-
-    //     try {
-    //         res.json(await this.commentCtrl.getRating(professional, null))
-    //     }
-
-    //     catch (err) {
-    //         res.status(500).json("ERROR")
-    //     }
-    // },
-
-    // getProfessionalSpecializationRating: async (req, res) => {
-    //     let professional = req.params.professional_id
-    //     let specialization = req.params.specialization
-
-    //     let profession = (await ProfessionalModel.findOne({ _id: professional })).profession
-    //     if (!isProfession(profession) || !isSpecializationOfProfession(profession, specialization)) {
-    //         return res.status(400).json("ERROR: invalid specialization")
-    //     }
-
-    //     try {
-    //         res.json(await this.commentCtrl.getRating(professional, specialization))
-    //     }
-
-    //     catch (err) {
-    //         console.log(err);
-    //         res.status(500).json("ERROR")
-    //     }
-    // },
-
-    // getRating: async (professional_id, specialization) => {
-    //     let comments = []
-
-    //     if (specialization == null) {
-    //         comments = await CommentModel.find({ professional_id })
-    //     }
-    //     else {
-    //         comments = await CommentModel.find({ professional_id, specialization: specialization })
-    //     }
-
-    //     let count = 0
-    //     let sum = 0
-
-    //     comments.forEach(c => {
-    //         if (specialization == null || specialization == c.specialization) {
-    //             count++
-    //             sum += c.rating
-    //         }
-    //     })
-
-    //     return (count!=0&&sum / count)||0
-    // }
 }
