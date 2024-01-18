@@ -37,7 +37,7 @@ exports.commentCtrl = {
                 res.status(404).json({data:'ERROR: invalid user',code:102})
             }
 
-            let url = 'http://localhost:5173/block/' + reported_user._id
+            let url = 'https://taupe-kleicha-da607e.netlify.app/block/' + reported_user._id
 
             admins.forEach(a => {
                 sendEmail(a.email, 'דווח על שימוש לרעה במערכת', url,

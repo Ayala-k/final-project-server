@@ -20,7 +20,7 @@ const sendDailyEmails = async () => {
     if (jobs) {
         jobs.forEach(j => {
             if (findDay(j.time) == findDay(yesterday)) {
-                let url = 'http://localhost:5173/write_comment/' + j.contracted_professional._id + '/' + j.specialization
+                let url = 'https://taupe-kleicha-da607e.netlify.app/write_comment/' + j.contracted_professional._id + '/' + j.specialization
                 sendEmail(j.client_id.email, 'נשמח לקבל משוב אודות האימון שלך ', url,
                     `<div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
                     <h3 style="color: darkblue; font-size: 20px;">נשמח לקבל משוב אודות האימון שלך</h3>
